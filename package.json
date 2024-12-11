@@ -1,0 +1,25 @@
+{
+  "name": "retake-project",
+  "version": "1.0.0",
+  "description": "Retake Project",
+  "main": "index.js",
+  "author": "Sergio Boffi",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "DEBUG=router:* nodemon --delay 1 --ignore public/ --ignore app.js",
+    "ejsc": "node ./node_modules/ejsc-views/bin/ejsc -d",
+    "test": "mocha --exit",
+    "watch:test": "mocha -w -min --delay=2000"
+  },
+  "dependencies": {
+    "chess.js": "^1.0.0-beta.8",
+    "ejsc-views": "^1.0.7",
+    "express": "^4.19.2",
+    "method-override": "^3.0.0",
+    "mongodb": "^6.2.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.7.5"
+  }
+}

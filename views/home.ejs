@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/general.css">
+    <title>Home</title>
+</head>
+<body onload="checkStorage()">
+    <header id="header-index">
+        <h1 class="titolo">BlinkyChess</h1>
+        <div id="header-right">
+            <a class="icon" href="/home"><img src="../images/casabianca.png" alt=""></a>
+            <div class="dropdown">
+                <a class="icon"><img src="../images/account.png" ></a>
+                <div class="dropdown-content">
+                    <a id="profile-link">Profile</a>
+                    <a href="/home/login">Logout</a>
+                </div>
+            </div>
+        </div>
+
+    </header>
+    <main class="main-index">
+        <button class="button-container" onclick="renderGamePref()"><b>Look for a game</b></button>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Spectate </th>
+                    <th>Black</th>
+                    <th>White</th>
+                </tr>
+                <% for (let i = 0; i < Games.length; i++) { %>
+                    <tr>
+                        <%if(Games[i]){%>
+                        <td><a href= "<%= 'home/game/'+Games[i]._id+'/w' %>" ><button id="spectate">Spectate</button></a></td>
+                        <td><%= Games[i].black %></td>
+                        <td><%= Games[i].white %></td>
+                        <%}else{%>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <%}%>
+                    </tr>
+                <% } %>
+            </table>
+        </div>
+        <div class="choose-match">
+            <div class="divTitle">
+                <div></div>
+                <h1>Match Options</h1>
+                <button  onclick="closePopUp()"><img src="../images/close.png"></button>
+            </div>
+            
+            <div id="match-row1">
+                <button class="btnChooseactive">5 Minutes</button>
+                <button class="btnChoose">10 Minutes</button>
+                <button class="btnChoose">30 Minutes</button>
+            </div>
+            <div id="match-row2">
+                <button class="btnChooseactive">Ranked</button>
+                <button class="btnChoose">Unranked</button>
+
+            </div>
+            <button  id="match-row3"class="btnChoose"><b>PLAY</b></button>
+    
+        </div>
+    </main>
+    <footer>
+        <p>Made By Sergio Boffi ©</p>
+        <p>For any need, contact me at → boffis@usi.ch</p>
+    </footer>
+    <script src="js/api.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/routes.js"></script>
+    <script src="js/ejs.min.js"></script>
+    <script src="js/views.js"></script>
+    <script src="js/lookingFor.js"></script>
+
+</body>
+</html>

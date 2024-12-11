@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../css/general.css">
+    <link rel="stylesheet" href="../../css/login.css">
+
+    <title>Profile View</title>
+</head>
+<body onload="checkStorage()">
+    <header id="header-index">
+        <h1 class="titolo">BlinkyChess</h1>
+        <div id="header-right">
+            <a class="icon" href="/home"><img src="../../images/casa.png" alt="Home"></a>
+            <div class="dropdown">
+                <a class="icon" href="#"><img src="../../images/accountbianco.png" alt="Account"></a>
+                <div class="dropdown-content">
+                    <a href="/home/profile/<%= User.username %>">Profile</a>
+                    <a href="/home/login">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="main-index">
+        <div id="profile-view">
+            <h2 id="username-title"><%= User.username %></h2>
+            <%  var won=parseInt(User.won);
+                var lost=parseInt(User.lost);
+                var wr;
+                lost==0 ? wr="100%": wr=((won/(won+lost)).toString()); 
+            %>
+            <p><strong>Win Rate:</strong> <span id="win-rate"><%= wr!="100%"?(wr*100).toFixed(2):"100" %>%</span></p>
+            <p><strong>ELO:</strong> <span id="elo"><%= User.elo %></span></p>
+            <p><strong>Won Games:</strong> <span id="won-games"><%= User.won %></span></p>
+            <h3>Score of Last 10 Games</h3>
+            <div id="last-10-games">
+                <% for(let i=0;i < 10; i++){let game=User.lasts[i] %>
+                    <div class="game-result">
+                        <% if (game == 'w') { %>
+                            <img src="../../images/vittoria.png" alt="Win" />
+                        <% } else if ( game == 'l') { %>
+                            <img src="../../images/sconfitta.png" alt="Loss" />
+                        <% } else if ( game == 'd') {%>
+                            <img src="../../images/bilancia.png" alt="Draw" />
+                        <% } else { %>
+                            <img src="../../images/notplayed.png" alt="Notp" />
+                        <% } %>
+                    </div>
+                <% }; %>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>Made By Sergio Boffi ©</p>
+        <p>For any need, contact me at → boffis@usi.ch</p>
+    </footer>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/login.js"></script>
+    <script src="../../js/routes.js"></script>
+    <script src="../../js/ejs.min.js"></script>
+    <script src="../../js/views.js"></script>
+</body>
+</html>

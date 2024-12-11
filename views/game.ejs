@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../../css/general.css">
+    <link rel="stylesheet" href="../../../css/game.css">
+    
+    <title>Match</title>
+</head>
+<body>
+    <header id="header-index">
+        <div id="header-right">
+            <a class="logo" href="#"><img src="../../../images/logo.png" alt=""></a>
+        </div>
+    </header>
+    <main class="main-index">
+        <div class="popup">
+            <div id="popup-message"></div>
+            <button class="home-button">Home</button>
+        </div>
+        <div class="popup2">
+            <div id="popup-message2">
+                <label for="promotion">Choose what the pawn becomes: </label>
+                <select id="promotion">
+                    <option value="s">Select a piece</option>
+                    <option value="Q">Queen</option>
+                    <option value="R">Rook</option>
+                    <option value="B">Bishop</option>
+                    <option value="N">Knight</option>
+                </select>
+            </div>
+            
+        </div>
+        <div>
+            <% if (color != 'white') { Username.reverse();Time.reverse() } %>
+            <div class="player-info">
+                <div class="username"><%= Username[0].username %></div>
+                <br>    
+                <div>ELO: <%= Username[0].elo %></div>
+                <%  var won=parseInt(Username[0].won);
+                    var lost=parseInt(Username[0].lost);
+                    var wr;
+                    lost==0 ? wr="100%": wr=((won/(won+lost)).toString()); 
+                %>
+                <div>WR: <%= wr!="100%"?(wr*100).toFixed(2):"100" %>%</div>
+                <div class="timeHis">Time left: <%=Math.floor(Time[0]/60).toString()+":"+String(Time[0]%60).padStart(2, '0');%></div>
+            </div>
+            
+            <div class="chessboard">
+                <% let i = 0, row = 0; %>
+                <% if (color != 'white') { Board = Board.split(" ")[0].split("").reverse().join("") } %>
+                <% if (color == 'white') { Board = Board.split(" ")[0] } %>
+                <% while (Board[i] != undefined) { %>
+                    <div class="row">
+                        <% let j = 0; %>
+                        <% while (Board[i] != "/") { %>
+                            <% let piece = Board[i]; %>
+                            <% if (piece == undefined) break; %>
+                            <% if (!isNaN(piece)) { 
+                                for (let s = 0; s < Board[i]; s++) { %>
+                                    <% let cellColorClass = (row + j) % 2 === 0 ? 'whitecell' : 'browncell'; %>
+                                    <div class="<%= cellColorClass %>">
+                                        <img id="<%= color != 'white' ? row.toString() + ((7 - j).toString()) : ((7 - row).toString()) + (j.toString()) %>">
+                                    </div>
+                                <% j++; } j--; %>
+                            <% } else { %>
+                                <% let cellColorClass = (row + j) % 2 === 0 ? 'whitecell' : 'browncell'; %>
+                                <div class="<%= cellColorClass %>">
+                                    <img class="pedina" alt="nothing" id="<%= color != 'white' ? row.toString() + ((7 - j).toString()) : ((7 - row).toString()) + j.toString() %>" src="<%= '../../../images/' + (piece === piece.toUpperCase() ? 'whites/' : 'blacks/') + piece.toLowerCase() + '.png' %>">
+                                </div>
+                            <% } %>
+                        <% i++; j++; } %>
+                        <% if (Board[i] == undefined) break; %>
+                    </div>
+                <% row++; i++; } %>
+                
+            </div>
+            
+        </div>
+        <div class="player-info">
+            <div class="username"><%= Username[1].username %></div>
+            <br>    
+            <div>ELO: <%= Username[1].elo %></div>
+            <%  var won=parseInt(Username[1].won);
+                var lost=parseInt(Username[1].lost);
+                var wr;
+                lost==0 ? wr="100%": wr=((won/(won+lost)).toString()); 
+            %>
+            <div>WR: <%= wr!="100%"?(wr*100).toFixed(2):"100" %>%</div>
+            <div class="timeMine">Time left: <%=Math.floor(Time[1]/60).toString()+":"+String(Time[1]%60).padStart(2, '0');%></div>
+        </div>
+        
+    </main>
+    <footer>
+        <p>Made By Sergio Boffi ©</p>
+        <p>For any need, contact me at → boffis@usi.ch</p>
+    </footer>
+    <script src="../../../js/api.js"></script>
+    <script src="../../../js/routes.js"></script>
+    <script src="../../../js/ejs.min.js"></script>
+    <script src="../../../js/views.js"></script>
+    <script type="module" src="../../../js/game.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+
+</body>
+</html>

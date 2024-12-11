@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/general.css">
+    <link rel="stylesheet" href="../css/login.css">
+
+    <title>Login</title>
+</head>
+<body onload="sessionStorage.clear()">
+    <main class="main-account">
+        <div class="div-login">
+                <h1>Login</h1>
+                <div class="inputbox">
+                    <input id="username" class="user-log"  placeholder="Username" required>
+                </div>
+                <div class="inputbox">
+                    <input id="password" class="psw-log"  type="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-submit" onclick="tryLogin()">Login</button>
+                <div class="register-link1">
+                    <p>Don't you have an account yet? <a href="login/register">Register</a></p>
+                    
+                </div>
+        </div>
+    </main>
+    <script src="../js/api.js"></script>
+    <script src="../js/login.js"></script>
+    <script src="../js/routes.js"></script>
+    <script src="../js/ejs.min.js"></script>
+    <script src="../js/views.js"></script>
+
+</body>
+</html>
