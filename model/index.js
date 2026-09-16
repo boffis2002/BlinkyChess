@@ -1,9 +1,7 @@
+require('dotenv').config();
 const mongodb = require('mongodb');
 
-
-const local_mongodb_uri = 'mongodb://127.0.0.1:27017/';
-
-const default_mongodb_uri = local_mongodb_uri;
+const default_mongodb_uri = process.env.MONGODB_URI;
     
 const clients = {};
 const connections = {};

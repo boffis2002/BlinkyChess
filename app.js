@@ -8,9 +8,7 @@ const server = initServer(initControllers(initMiddleware(initApp())));
 require("./serverIO").init(server);
 function initApp() {
     let app = express();
-    app.set("view engine", "ejs");
 
-    require('ejsc-views').compile();
     require("./model").connect();
 
     return app;
@@ -40,8 +38,11 @@ function initControllers(app) {
     app.use("/home/login/register",routers["register"]);
     app.use("/home/login",routers["login"]);
     app.use("/home",routers["home"]);
-    
 
+    app.use(express.static(path.join(__dirname, "client/dist")));
+    app.get(/^\/(?!home|socket\.io).*/, (req, res) => {
+        res.sendFile(path.join(__dirname, "client/dist", "index.html"));
+    });
 
     app.use(function(req, res, next) {
         const err = new Error('Not Found');

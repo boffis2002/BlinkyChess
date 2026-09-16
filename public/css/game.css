@@ -3,248 +3,134 @@
     src: url("PLZ.ttf") format('truetype');
 }
 
-@media screen and (min-width: 769px) {
-    .chessboard {
-        display: grid;
-        grid-template-rows: repeat(8, 1fr);
-        grid-template-columns: repeat(8, 1fr);
-        width: 600px; 
-        height: 600px; 
-        margin: 0 auto;
-    }
-    
-    .row {
-        display: contents; 
-    }
-    
-    .whitecell, .browncell {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        display: flex; 
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .whitecell {
-        background-color: #DED5C4
-    }
-    
-    .browncell {
-        background-color: #2E2012; 
-    }
-    .whitecell img, .browncell img {
-        width: 100%; 
-        height: 100%;
-        object-fit: contain;
-    }
-    .player-info{
-        color:black;
-        border:2px solid black;
-        box-shadow: #999;
-        background-color: rgb(200, 200, 255);
-    }
-    .player-info div:not(.username){
-        margin-left: 20%;
-    }
-    .popup {
-        display: none;
-        left:35%;
-        width:30%;
-        height:20%;
-        border:solid black 1px;
-        text-align: center;
-        color:white;
-        z-index:999;
-        border-radius: 10px;
-    }
-    .popup2{
-        display: none;
-        left:35%;
-        width:30%;
-        height:20%;
-        border:solid black 1px;
-        text-align: center;
-        color:white;
-        z-index:999;
-        border-radius: 10px;
-    }
-    
-
-    .home-button {
-        margin-top: 10%;
-
-        
-        padding:1%;
-        background-color: white;
-        color: black;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-    
-    .home-button:hover {
-        background-color: rgb(196, 196, 196);
-    }
-    .username{
-        margin-left: 5%;
-        font-size: 30px;
-    }
-    p {
-        font-size: 1.2em;
-        margin: 10px 0;
-    }
-    #popup-message{
-        background-color: rgb(55, 55, 55);
-        border-top-left-radius: 9px;
-        border-top-right-radius: 9px;
-        height: 30%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        text-decoration: double;
-    }
-    #popup-message2{
-        height: 100%;
-        display: flex;
-        gap:5%;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        text-decoration: double;
-    }
-    #promotion{
-        font-size: 20px;
-        text-decoration: double;
-    }
-    
+.main-index {
+    align-items: center;
 }
 
-@media screen and (max-width: 769px) {
-    .chessboard {
-        display: grid;
-        grid-template-rows: repeat(8, 1fr);
-        grid-template-columns: repeat(8, 1fr);
-        width: 97%; 
-        height: 50%; 
-        margin: 0 auto;
-    }
-    
-    .row {
-        display: contents; 
-    }
-    
-    .whitecell, .browncell {
-        width: 100%;
-        height: 100%;
-        position: relative;
-        display: flex; 
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .whitecell {
-        background-color: #DED5C4
-    }
-    
-    .browncell {
-        background-color: #2E2012; 
-    }
-    .whitecell img, .browncell img {
-        width: 100%; 
-        height: 100%;
-        object-fit: contain;
-    }
-    .player-info{
-        color:black;
-        border:2px solid black;
-        font-size: 15px;
-        box-shadow: #999;
-        background-color: rgb(200, 200, 255);
-    }
-    .player-info div:not(.username){
-        margin-left: 20%;
-    }
-    .popup {
-        display: none;
-        top:45%;
-        left:35%;
-        width:90%;
-        height:20%;
-        border:solid black 1px;
-        text-align: center;
-        color:white;
-        z-index:999;
-        border-radius: 10px;
-    }
-    .popup2{
-        display: none;
-        top:40%;
-        left:5%;
-        width:90%;
-        height:20%;
-        border:solid black 1px;
-        text-align: center;
-        color:white;
-        z-index:999;
-        border-radius: 10px;
-    }
-    
-
-    .home-button {
-        margin-top: 10%;
-        padding:1%;
-        background-color: white;
-        color: black;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-    
-    .home-button:hover {
-        background-color: rgb(196, 196, 196);
-    }
-    .username{
-        margin-left: 5%;
-        font-size: 20px;
-    }
-    p {
-        font-size:15px;
-        margin: 10px 0;
-    }
-    #popup-message{
-        background-color: rgb(55, 55, 55);
-        border-top-left-radius: 9px;
-        border-top-right-radius: 9px;
-        height: 30%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        text-decoration: double;
-    }
-    #popup-message2{
-        height: 100%;
-        display: flex;
-        gap:5%;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        text-decoration: double;
-    }
-    #promotion{
-        font-size: 12px;
-        text-decoration: double;
-    }
+.chessboard {
+    display: grid;
+    grid-template-rows: repeat(8, 1fr);
+    grid-template-columns: repeat(8, 1fr);
+    width: min(88vw, 60vh, 560px);
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-@media screen and (prefers-color-scheme: dark) {
-    .player-info{
-        margin-top: 5%;
-        margin-bottom: 5%;
-        background-color: rgba(0, 200, 150);;
-    }
+.row {
+    display: contents;
+}
+
+.whitecell, .browncell {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.whitecell {
+    background-color: #DED5C4;
+}
+
+.browncell {
+    background-color: #2E2012;
+}
+
+.whitecell img, .browncell img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: pointer;
+}
+
+.player-info {
+    color: var(--text-on-accent);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    background-color: var(--accent);
+    padding: clamp(8px, 2vw, 14px) clamp(14px, 3vw, 20px);
+    width: min(88vw, 560px);
+    margin: 0 auto clamp(8px, 2vw, 14px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(6px, 2vw, 16px);
+}
+
+.player-info .username {
+    font-size: clamp(18px, 3vw, 28px);
+    font-weight: 700;
+    width: 100%;
+}
+
+.player-info div:not(.username) {
+    font-size: clamp(13px, 2vw, 16px);
+}
+
+.popup, .popup2 {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(90vw, 380px);
+    border: none;
+    text-align: center;
+    color: var(--text-on-accent);
+    background-color: var(--accent);
+    z-index: 999;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.home-button {
+    margin: 16px 0;
+    padding: 10px 24px;
+    background-color: white;
+    color: black;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.home-button:hover {
+    background-color: rgb(196, 196, 196);
+}
+
+p {
+    font-size: clamp(14px, 2vw, 1.2em);
+    margin: 10px 0;
+}
+
+#popup-message {
+    background-color: rgb(55, 55, 55);
+    color: white;
+    padding: clamp(16px, 4vw, 24px) 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(16px, 3vw, 20px);
+}
+
+#popup-message2 {
+    padding: clamp(16px, 4vw, 24px) 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(14px, 2.5vw, 20px);
+    text-align: center;
+}
+
+#promotion {
+    font-size: clamp(14px, 2.5vw, 18px);
+    padding: 4px 8px;
+    border-radius: 6px;
 }
