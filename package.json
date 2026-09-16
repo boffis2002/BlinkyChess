@@ -8,14 +8,18 @@
   "scripts": {
     "start": "node app.js",
     "dev": "DEBUG=router:* nodemon --delay 1 --ignore public/ --ignore client/ --ignore app.js",
+    "dev:api": "nodemon api/dev-server.js",
     "build": "npm --prefix client install && npm --prefix client run build",
-    "test": "mocha --exit",
-    "watch:test": "mocha -w -min --delay=2000"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "chess.js": "^1.0.0-beta.8",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
     "method-override": "^3.0.0",
     "mongodb": "^6.2.0",
     "morgan": "^1.10.0",
@@ -23,6 +27,9 @@
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "mongodb-memory-server": "^11.2.0",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2",
+    "vitest": "^5.0.1"
   }
 }
