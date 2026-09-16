@@ -7,6 +7,7 @@ const { signToken } = require('../../src/auth/jwt');
 const { isValidUsername, isValidPassword } = require('../lib/validate');
 const asyncHandler = require('../lib/asyncHandler');
 const publicUser = require('../lib/publicUser');
+const requireAuth = require('../middleware/requireAuth');
 
 const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days, matches the JWT expiry
 
@@ -55,6 +56,12 @@ router.post('/login', asyncHandler(async (req, res) => {
 router.post('/logout', (req, res) => {
   res.clearCookie('token');
   res.status(204).end();
+});
+
+// Lets the client discover who's logged in without ever reading the
+// httpOnly cookie itself — used to restore the session after a page refresh.
+router.get('/me', requireAuth, (req, res) => {
+  res.status(200).json({ username: req.user.username });
 });
 
 module.exports = router;

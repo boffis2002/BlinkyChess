@@ -1,20 +1,33 @@
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import api from '../api';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [username, setUsername] = useState(() => sessionStorage.getItem('username'));
+  const [username, setUsername] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .me()
+      .then((result) => {
+        if (!cancelled) setUsername(result.username);
+      })
+      .catch(() => {
+        if (!cancelled) setUsername(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const login = useCallback(async (loginUsername, password) => {
-    const user = await api.getUser(loginUsername);
-    if (password !== user.password) {
-      throw new Error('password is wrong, try again');
-    }
-    sessionStorage.clear();
-    sessionStorage.setItem('username', loginUsername);
-    sessionStorage.setItem('password', password);
-    setUsername(loginUsername);
+    const user = await api.login(loginUsername, password);
+    setUsername(user.username);
   }, []);
 
   const register = useCallback(async (newUsername, password, confirmPassword) => {
@@ -24,47 +37,17 @@ export function AuthProvider({ children }) {
     if (newUsername.includes(' ') || newUsername === '' || password === '' || password.includes(' ')) {
       throw new Error('Username or password not valid, dont put spaces or blank boxes');
     }
-    const user = await api.addUser({ username: newUsername, password });
-    if (!user) {
-      throw new Error('username already taken, choose another name');
-    }
-    sessionStorage.clear();
-    sessionStorage.setItem('username', newUsername);
-    sessionStorage.setItem('password', password);
-    setUsername(newUsername);
+    const user = await api.register(newUsername, password);
+    setUsername(user.username);
   }, []);
 
-  const logout = useCallback(() => {
-    sessionStorage.clear();
+  const logout = useCallback(async () => {
+    await api.logout().catch(() => {});
     setUsername(null);
   }, []);
 
-  const checkStorage = useCallback(async () => {
-    const storedUsername = sessionStorage.getItem('username');
-    const storedPassword = sessionStorage.getItem('password');
-    sessionStorage.removeItem('id');
-    if (!storedUsername) {
-      sessionStorage.clear();
-      setUsername(null);
-      return false;
-    }
-    try {
-      const user = await api.getUser(storedUsername);
-      if (storedPassword !== user.password) {
-        sessionStorage.clear();
-        setUsername(null);
-        return false;
-      }
-      return true;
-    } catch {
-      sessionStorage.clear();
-      setUsername(null);
-      return false;
-    }
-  }, []);
-
   return (
-    <AuthContext.Provider value={{ username, login, register, logout, checkStorage }}>
+    <AuthContext.Provider value={{ username, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

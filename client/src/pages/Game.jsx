@@ -1,19 +1,22 @@
 import { Chess } from 'chess.js';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { io } from 'socket.io-client';
 import api from '../api';
 import Board from '../components/Board';
 import PlayerInfo from '../components/PlayerInfo';
 import PromotionPopup from '../components/PromotionPopup';
 import { useAuth } from '../context/AuthContext';
 
-function shiftLasts(lasts, resultChar) {
-  const chars = (lasts || 'nnnnnnnnnn').split('');
-  for (let i = 1; i < 10; i++) chars[i - 1] = chars[i];
-  chars[9] = resultChar;
-  return chars.join('');
-}
+const POLL_INTERVAL_MS = 1500;
+
+const REASON_TEXT = {
+  checkmate: 'checkmate',
+  stalemate: 'stalemate',
+  insufficient_material: 'insufficient material',
+  threefold_repetition: 'threefold repetition',
+  fifty_move: 'the fifty-move rule',
+  timeout: 'timeout',
+};
 
 function popupColor(variant) {
   if (variant === 'win') return 'rgba(0,255,0,0.8)';
@@ -34,113 +37,62 @@ export default function Game() {
   const [liveBtime, setLiveBtime] = useState(null);
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [pendingMove, setPendingMove] = useState(null);
-  const [endPopup, setEndPopup] = useState(null);
+  const [notFound, setNotFound] = useState(false);
 
-  const socketRef = useRef(null);
-  const gameOverRef = useRef(false);
-  const timeoutSentRef = useRef(false);
-
-  const chess = useMemo(() => new Chess(game ? game.board : undefined), [game]);
-  const turnColor = chess.turn();
+  const chess = useMemo(() => new Chess(game ? game.fen : undefined), [game?.fen]);
 
   const loadGame = useCallback(async () => {
-    const g = await api.getGame(id);
-    const [wUser, bUser] = await Promise.all([
-      api.getUser(g.white),
-      g.black ? api.getUser(g.black) : Promise.resolve(null),
-    ]);
-    setWhiteUser(wUser);
-    setBlackUser(bUser);
-    setLiveWtime(Number(g.wtime));
-    setLiveBtime(Number(g.btime));
-    timeoutSentRef.current = false;
-    setGame(g);
+    try {
+      const g = await api.getGame(id);
+      const [w, b] = await Promise.all([api.getUser(g.players.white), api.getUser(g.players.black)]);
+      setGame(g);
+      setWhiteUser(w);
+      setBlackUser(b);
+      setLiveWtime(g.liveClock.white);
+      setLiveBtime(g.liveClock.black);
+    } catch {
+      setNotFound(true);
+    }
   }, [id]);
 
+  // Poll instead of a socket connection — pause while the tab isn't visible.
   useEffect(() => {
-    loadGame();
+    let cancelled = false;
+    function tick() {
+      if (document.hidden || cancelled) return;
+      loadGame();
+    }
+    tick();
+    const interval = window.setInterval(tick, POLL_INTERVAL_MS);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      cancelled = true;
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', tick);
+    };
   }, [loadGame]);
 
   useEffect(() => {
     setSelectedSquare(null);
     setPendingMove(null);
-  }, [game]);
+  }, [game?.fen]);
 
+  // Smooth per-second countdown between polls; each poll resyncs it from the server.
   useEffect(() => {
-    const socket = io();
-    socketRef.current = socket;
-    socket.emit('join room', { room: id, user: username });
-    socket.on('update board', () => {
-      loadGame();
-    });
-    return () => socket.disconnect();
-  }, [id, username, loadGame]);
-
-  const activeUsername = game ? (turnColor === 'w' ? game.white : game.black) : null;
-  const opponentActiveUsername = game ? (turnColor === 'w' ? game.black : game.white) : null;
-  const myTurn = Boolean(game && username === activeUsername);
-  const isParticipant = Boolean(game && (username === game.white || username === game.black));
-
-  // Detect checkmate / draw / timeout and report the outcome.
-  useEffect(() => {
-    if (!game || gameOverRef.current) return;
-
-    async function finish(result, cause) {
-      if (gameOverRef.current) return;
-      gameOverRef.current = true;
-      if (!isParticipant) return;
-
-      const isRanked = game.ranked === true || game.ranked === 'true';
-      const user = await api.getUser(username);
-
-      if (result === 'win') {
-        setEndPopup({ variant: 'win', message: 'You won the match!' });
-        await api.patchAfterGame(username, true, isRanked ? 15 : 0, shiftLasts(user.lasts, 'w'));
-      } else if (result === 'lose') {
-        setEndPopup({ variant: 'lose', message: 'You lost the match!' });
-        await api.patchAfterGame(username, false, isRanked ? 15 : 0, shiftLasts(user.lasts, 'l'));
-        window.setTimeout(() => api.deleteGame(id).catch(() => {}), 1000);
-      } else {
-        setEndPopup({ variant: 'draw', message: `It's a draw! a ${cause} happened` });
-        await api.patchAfterGame(username, false, 0, shiftLasts(user.lasts, 'd'));
-        api.deleteGame(id).catch(() => {});
-      }
-    }
-
-    if (chess.isStalemate()) { finish('draw', 'stalemate'); return; }
-    if (chess.isInsufficientMaterial()) { finish('draw', 'insufficient material'); return; }
-    if (chess.isThreefoldRepetition()) { finish('draw', 'threefold repetition'); return; }
-
-    const activeTime = chess.isCheckmate() ? 0 : (turnColor === 'w' ? game.wtime : game.btime);
-    if (activeTime <= 0) {
-      if (username === activeUsername) finish('lose');
-      else if (username === opponentActiveUsername) finish('win');
-    }
-  }, [game, chess, turnColor, activeUsername, opponentActiveUsername, isParticipant, username, id]);
-
-  // Tick the clock for whichever color is currently to move.
-  useEffect(() => {
-    if (!game || gameOverRef.current) return;
+    if (!game || game.status !== 'active') return;
     const interval = window.setInterval(() => {
-      if (turnColor === 'w') setLiveWtime((t) => Math.max(0, (t ?? 0) - 1));
+      if (game.turn === 'w') setLiveWtime((t) => Math.max(0, (t ?? 0) - 1));
       else setLiveBtime((t) => Math.max(0, (t ?? 0) - 1));
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [game, turnColor]);
+  }, [game]);
 
-  // If it's my turn and my live clock hits zero, persist the timeout.
-  useEffect(() => {
-    if (!game || gameOverRef.current || timeoutSentRef.current) return;
-    const liveActiveTime = turnColor === 'w' ? liveWtime : liveBtime;
-    if (myTurn && liveActiveTime === 0) {
-      timeoutSentRef.current = true;
-      const wtime = turnColor === 'w' ? 0 : game.wtime;
-      const btime = turnColor === 'b' ? 0 : game.btime;
-      api.patchBoard(id, game.board, wtime, btime).then(() => {
-        socketRef.current?.emit('move', { room: id, fen: game.board });
-      });
-    }
-  }, [liveWtime, liveBtime, turnColor, myTurn, game, id]);
+  const isParticipant = Boolean(game && username && (username === game.players.white || username === game.players.black));
+  const myTurn = Boolean(
+    game &&
+      game.status === 'active' &&
+      username === (game.turn === 'w' ? game.players.white : game.players.black)
+  );
 
   const verboseMoves = useMemo(() => {
     if (!selectedSquare || !myTurn) return [];
@@ -149,25 +101,21 @@ export default function Game() {
 
   const legalDestinations = useMemo(() => [...new Set(verboseMoves.map((m) => m.to))], [verboseMoves]);
 
-  function commitMove({ from, to, promotion }) {
-    const move = chess.move({ from, to, promotion });
-    if (!move) return;
+  async function commitMove({ from, to, promotion }) {
     setSelectedSquare(null);
     setPendingMove(null);
-
-    const activeTime = (turnColor === 'w' ? liveWtime : liveBtime) ?? 0;
-    const increment = activeTime + 15;
-    const wtime = turnColor === 'w' ? increment : game.wtime;
-    const btime = turnColor === 'b' ? increment : game.btime;
-    const fen = chess.fen();
-
-    api.patchBoard(id, fen, wtime, btime).then(() => {
-      socketRef.current?.emit('move', { room: id, fen });
-    });
+    try {
+      await api.submitMove(id, { from, to, promotion });
+    } finally {
+      // Resync either way: on success this picks up the new position; on a
+      // rejected move (e.g. the opponent's move arrived first) it corrects
+      // whatever the client had guessed.
+      loadGame();
+    }
   }
 
   function handleSquareClick(square, piece) {
-    if (!myTurn || gameOverRef.current) return;
+    if (!myTurn) return;
     if (legalDestinations.includes(square)) {
       const movesToSquare = verboseMoves.filter((m) => m.to === square);
       if (movesToSquare.some((m) => m.promotion)) {
@@ -187,6 +135,19 @@ export default function Game() {
     commitMove({ ...pendingMove, promotion });
   }
 
+  if (notFound) {
+    return (
+      <>
+        <header id="header-index">
+          <div id="header-right">
+            <a className="logo" href="#"><img src="/images/logo.png" alt="" /></a>
+          </div>
+        </header>
+        <main className="main-index"><p>Game not found.</p></main>
+      </>
+    );
+  }
+
   if (!game || !whiteUser) {
     return (
       <>
@@ -198,6 +159,21 @@ export default function Game() {
         <main className="main-index"><div className="loader"></div></main>
       </>
     );
+  }
+
+  let endPopup = null;
+  if (game.status === 'finished') {
+    const { winner, reason } = game.result;
+    const reasonText = REASON_TEXT[reason] || reason;
+    if (winner === null) {
+      endPopup = { variant: 'draw', message: `It's a draw! a ${reasonText} happened` };
+    } else if (isParticipant) {
+      const iWon = winner === (username === game.players.white ? 'white' : 'black');
+      endPopup = iWon ? { variant: 'win', message: 'You won the match!' } : { variant: 'lose', message: 'You lost the match!' };
+    } else {
+      const winnerName = winner === 'white' ? game.players.white : game.players.black;
+      endPopup = { variant: winner === 'white' ? 'win' : 'lose', message: `${winnerName} won the match!` };
+    }
   }
 
   const myUser = color === 'white' ? whiteUser : blackUser;

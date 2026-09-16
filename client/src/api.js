@@ -1,69 +1,83 @@
 async function validateResponse(res) {
-  if (res.status === 200 || res.status === 201) {
-    return res.json();
+  if (res.status === 204) return;
+  let body = null;
+  try {
+    body = await res.json();
+  } catch {
+    // no body (e.g. a network-level failure surfaced as non-JSON)
   }
-  if (res.status === 204) {
-    return;
+  if (!res.ok) {
+    throw new Error((body && body.error) || `request failed (${res.status})`);
   }
-  throw res.status;
+  return body;
 }
 
 async function fetchJSON(method, url, body) {
   const headers = { Accept: 'application/json' };
-  if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
+  if (body !== undefined) {
     headers['Content-Type'] = 'application/json';
     body = JSON.stringify(body);
   }
-  const res = await fetch(url, { method, headers, body });
+  const res = await fetch(url, { method, headers, body, credentials: 'include' });
   return validateResponse(res);
 }
 
-function getUser(username) {
-  return fetchJSON('GET', '/home/login/' + username);
+function register(username, password) {
+  return fetchJSON('POST', '/api/auth/register', { username, password });
 }
 
-function addUser(user) {
-  return fetchJSON('POST', '/home/login/register', user);
+function login(username, password) {
+  return fetchJSON('POST', '/api/auth/login', { username, password });
+}
+
+function logout() {
+  return fetchJSON('POST', '/api/auth/logout');
+}
+
+function me() {
+  return fetchJSON('GET', '/api/auth/me');
+}
+
+function getUser(username) {
+  return fetchJSON('GET', '/api/users/' + username);
 }
 
 function getGames() {
-  return fetchJSON('GET', '/home/game/all');
+  return fetchJSON('GET', '/api/games');
 }
 
 function getGame(id) {
-  return fetchJSON('GET', '/home/game/' + id);
+  return fetchJSON('GET', '/api/games/' + id);
 }
 
-function addGame(game) {
-  return fetchJSON('POST', '/home/game', game);
+function joinQueue({ timeControl, ranked }) {
+  return fetchJSON('POST', '/api/queue/join', { timeControl, ranked });
 }
 
-function deleteGame(id) {
-  return fetchJSON('DELETE', '/home/game/' + id);
+function queueStatus(queueEntryId) {
+  return fetchJSON('GET', '/api/queue/status?queueEntryId=' + encodeURIComponent(queueEntryId));
 }
 
-function patchBoard(id, board, wtime, btime) {
-  return fetchJSON('PATCH', '/home/game/' + id, { board, wtime, btime });
+function leaveQueue(queueEntryId) {
+  return fetchJSON('DELETE', '/api/queue/leave', { queueEntryId });
 }
 
-function insertBlack(id, black) {
-  return fetchJSON('PATCH', '/home/game/' + id + '/b', black);
-}
-
-function patchAfterGame(username, win, elo, lasts) {
-  return fetchJSON('PATCH', '/home/game', { username, win, elo, lasts });
+function submitMove(gameId, { from, to, promotion }) {
+  return fetchJSON('POST', `/api/games/${gameId}/moves`, { from, to, promotion });
 }
 
 const api = {
+  register,
+  login,
+  logout,
+  me,
   getUser,
-  addUser,
   getGames,
   getGame,
-  addGame,
-  deleteGame,
-  patchBoard,
-  insertBlack,
-  patchAfterGame,
+  joinQueue,
+  queueStatus,
+  leaveQueue,
+  submitMove,
 };
 
 export default api;

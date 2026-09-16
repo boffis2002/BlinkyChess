@@ -1,16 +1,13 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-const target = 'http://localhost:8989'
-
+// /css and /images aren't proxied: they're served natively by Vite itself
+// from client/public/{css,images} (symlinked to the shared public/ assets).
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/home': target,
-      '/css': target,
-      '/images': target,
-      '/socket.io': { target, ws: true },
+      '/api': 'http://localhost:3001',
     },
   },
 })

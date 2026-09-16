@@ -23,10 +23,10 @@ export default function Profile() {
   if (error) return null;
   if (!user) return null;
 
-  const won = parseInt(user.won, 10) || 0;
-  const lost = parseInt(user.lost, 10) || 0;
-  const wr = lost === 0 ? '100' : ((won / (won + lost)) * 100).toFixed(2);
-  const lasts = (user.lasts || 'nnnnnnnnnn').split('').slice(0, 10);
+  const wins = user.wins || 0;
+  const losses = user.losses || 0;
+  const wr = losses === 0 ? '100' : ((wins / (wins + losses)) * 100).toFixed(2);
+  const lasts = (user.lastResults || 'nnnnnnnnnn').split('').slice(0, 10);
 
   return (
     <>
@@ -36,7 +36,7 @@ export default function Profile() {
           <h2 id="username-title">{user.username}</h2>
           <p><strong>Win Rate:</strong> <span id="win-rate">{wr}%</span></p>
           <p><strong>ELO:</strong> <span id="elo">{user.elo}</span></p>
-          <p><strong>Won Games:</strong> <span id="won-games">{user.won}</span></p>
+          <p><strong>Won Games:</strong> <span id="won-games">{user.wins}</span></p>
           <h3>Score of Last 10 Games</h3>
           <div id="last-10-games">
             {Array.from({ length: 10 }, (_, i) => lasts[i]).map((result, i) => {

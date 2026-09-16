@@ -1,73 +1,67 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 
-const START_BOARD = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+const POLL_INTERVAL_MS = 1500;
 
 export default function Waiting() {
   const navigate = useNavigate();
-  const navigated = useRef(false);
+  const { username } = useAuth();
 
   useEffect(() => {
+    // `ignore` guards against React StrictMode's dev-only double-invoke of
+    // effects (mount -> cleanup -> mount): if this run gets torn down before
+    // joinQueue resolves, we still have to undo the join instead of leaving
+    // an orphaned queue entry that nothing is polling.
+    let ignore = false;
     let interval;
-    const username = sessionStorage.getItem('username');
-    const time = sessionStorage.getItem('time');
-    const ranked = sessionStorage.getItem('ranked');
-    sessionStorage.removeItem('id');
+    let myQueueEntryId = null;
 
-    function goToGame(id, color) {
-      if (navigated.current) return;
-      navigated.current = true;
-      sessionStorage.setItem('id', id);
-      navigate(`/game/${id}/${color}`);
+    async function goToGame(gameId) {
+      if (ignore) return;
+      const game = await api.getGame(gameId);
+      if (ignore) return;
+      const color = game.players.white === username ? 'w' : 'b';
+      navigate(`/game/${gameId}/${color}`);
     }
 
-    api.getGames().then((games) => {
-      let found = false;
-      for (const game of games) {
-        if (game.white === username) {
-          sessionStorage.setItem('id', game._id);
-          interval = window.setInterval(() => {
-            api.getGame(game._id).then((updated) => {
-              if (updated.black !== '') goToGame(updated._id, 'w');
-            });
-          }, 1000);
-          found = true;
-          break;
-        }
-        if ((game.black === '' && game.btime === time && game.ranked === ranked) || game.black === username) {
-          api.insertBlack(game._id, { black: username }).then(() => {
-            goToGame(game._id, 'b');
-          });
-          found = true;
-          break;
-        }
+    async function start() {
+      const timeControl = { initial: Number(sessionStorage.getItem('time')), increment: 15 };
+      const ranked = sessionStorage.getItem('ranked') === 'true';
+
+      const result = await api.joinQueue({ timeControl, ranked });
+      if (ignore) {
+        if (!result.matched) api.leaveQueue(result.queueEntryId).catch(() => {});
+        return;
       }
-      if (!found) {
-        const newGame = {
-          white: username,
-          black: '',
-          board: START_BOARD,
-          ranked,
-          wtime: time,
-          btime: time,
-        };
-        api.addGame(newGame).then((game) => {
-          sessionStorage.setItem('id', game._id);
-          interval = window.setInterval(() => {
-            api.getGame(game._id).then((updated) => {
-              if (updated.black !== '') goToGame(updated._id, 'w');
-            });
-          }, 1000);
-        });
+
+      if (result.matched) {
+        await goToGame(result.gameId);
+        return;
       }
-    });
+
+      myQueueEntryId = result.queueEntryId;
+      interval = window.setInterval(async () => {
+        if (ignore) return;
+        const status = await api.queueStatus(myQueueEntryId);
+        if (ignore) return;
+        if (status.matched) {
+          window.clearInterval(interval);
+          await goToGame(status.gameId);
+        }
+      }, POLL_INTERVAL_MS);
+    }
+
+    start();
 
     return () => {
+      ignore = true;
       if (interval) window.clearInterval(interval);
+      if (myQueueEntryId) api.leaveQueue(myQueueEntryId).catch(() => {});
     };
-  }, [navigate]);
+  }, [navigate, username]);
 
   return (
     <>

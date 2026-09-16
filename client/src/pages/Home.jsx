@@ -35,8 +35,8 @@ export default function Home() {
               {games.map((game) => (
                 <tr key={game._id}>
                   <td><button id="spectate" onClick={() => navigate(`/game/${game._id}/w`)}>Spectate</button></td>
-                  <td>{game.black}</td>
-                  <td>{game.white}</td>
+                  <td>{game.players.black}</td>
+                  <td>{game.players.white}</td>
                 </tr>
               ))}
             </tbody>

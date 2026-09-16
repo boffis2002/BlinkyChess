@@ -4,9 +4,9 @@ function secsToMins(secs) {
 }
 
 export default function PlayerInfo({ user, time, timeClassName }) {
-  const won = parseInt(user.won, 10) || 0;
-  const lost = parseInt(user.lost, 10) || 0;
-  const wr = lost === 0 ? '100' : ((won / (won + lost)) * 100).toFixed(2);
+  const wins = user.wins || 0;
+  const losses = user.losses || 0;
+  const wr = losses === 0 ? '100' : ((wins / (wins + losses)) * 100).toFixed(2);
 
   return (
     <div className="player-info">
