@@ -1,5 +1,11 @@
 const { getDb } = require('./db');
 
+// A distinct collection from the legacy site's "users" (different schema:
+// passwordHash vs. plaintext password, wins/losses/draws vs. won/lost) — this
+// keeps the two backends from ever reading or leaking each other's documents
+// while they run in parallel. Reconciled at cutover, not before.
+const COLLECTION = 'users_v2';
+
 function shiftResults(lastResults, resultChar) {
   const chars = (lastResults || 'nnnnnnnnnn').split('');
   for (let i = 1; i < 10; i++) chars[i - 1] = chars[i];
@@ -9,7 +15,7 @@ function shiftResults(lastResults, resultChar) {
 
 async function createUser({ username, passwordHash }) {
   const db = await getDb();
-  const collection = db.collection('users');
+  const collection = db.collection(COLLECTION);
   const existing = await collection.findOne({ username });
   if (existing) return null;
 
@@ -29,13 +35,13 @@ async function createUser({ username, passwordHash }) {
 
 async function getUserByUsername(username) {
   const db = await getDb();
-  return db.collection('users').findOne({ username });
+  return db.collection(COLLECTION).findOne({ username });
 }
 
 // outcome: 'win' | 'loss' | 'draw'
 async function recordGameResult(username, { outcome, eloDelta }) {
   const db = await getDb();
-  const collection = db.collection('users');
+  const collection = db.collection(COLLECTION);
   const user = await collection.findOne({ username });
   if (!user) throw new Error('user not found');
 
@@ -57,7 +63,7 @@ async function recordGameResult(username, { outcome, eloDelta }) {
 
 async function listLeaderboard(limit = 50) {
   const db = await getDb();
-  return db.collection('users').find({}).sort({ elo: -1 }).limit(limit).toArray();
+  return db.collection(COLLECTION).find({}).sort({ elo: -1 }).limit(limit).toArray();
 }
 
 module.exports = { createUser, getUserByUsername, recordGameResult, listLeaderboard, shiftResults };

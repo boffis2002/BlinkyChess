@@ -6,6 +6,7 @@ const { hashPassword, verifyPassword } = require('../../src/auth/password');
 const { signToken } = require('../../src/auth/jwt');
 const { isValidUsername, isValidPassword } = require('../lib/validate');
 const asyncHandler = require('../lib/asyncHandler');
+const publicUser = require('../lib/publicUser');
 
 const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days, matches the JWT expiry
 
@@ -17,11 +18,6 @@ function setSessionCookie(res, username) {
     sameSite: 'lax',
     maxAge: COOKIE_MAX_AGE_MS,
   });
-}
-
-function publicUser(user) {
-  const { passwordHash, ...rest } = user;
-  return rest;
 }
 
 router.post('/register', asyncHandler(async (req, res) => {

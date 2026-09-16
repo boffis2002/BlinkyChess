@@ -3,6 +3,10 @@ const { getDb } = require('./db');
 
 const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
+// Distinct from the legacy site's "games" collection (different schema) —
+// see the same note in src/models/users.js.
+const COLLECTION = 'games_v2';
+
 async function createGame({ white, black, ranked, timeControl }) {
   const db = await getDb();
   const now = new Date();
@@ -22,24 +26,24 @@ async function createGame({ white, black, ranked, timeControl }) {
     createdAt: now,
     updatedAt: now,
   };
-  const { insertedId } = await db.collection('games').insertOne(game);
+  const { insertedId } = await db.collection(COLLECTION).insertOne(game);
   return { ...game, _id: insertedId };
 }
 
 async function getGameById(id) {
   const db = await getDb();
-  return db.collection('games').findOne({ _id: new ObjectId(id) });
+  return db.collection(COLLECTION).findOne({ _id: new ObjectId(id) });
 }
 
 async function listActiveGames() {
   const db = await getDb();
-  return db.collection('games').find({ status: 'active' }).toArray();
+  return db.collection(COLLECTION).find({ status: 'active' }).toArray();
 }
 
 async function listFinishedGamesForUser(username) {
   const db = await getDb();
   return db
-    .collection('games')
+    .collection(COLLECTION)
     .find({ status: 'finished', $or: [{ 'players.white': username }, { 'players.black': username }] })
     .sort({ updatedAt: -1 })
     .toArray();
@@ -59,7 +63,7 @@ async function saveGameState(id, { fen, clock, moveEntry, status, result }) {
     },
   };
   if (moveEntry) update.$push = { moveHistory: moveEntry };
-  await db.collection('games').updateOne({ _id: new ObjectId(id) }, update);
+  await db.collection(COLLECTION).updateOne({ _id: new ObjectId(id) }, update);
   return getGameById(id);
 }
 

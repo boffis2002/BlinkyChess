@@ -43,7 +43,7 @@ describe('matchmaking queue (integration, bug #6: race condition creating duplic
     // The loser of the race falls back to waiting, it does not create a second game.
     const db = await getDb();
     const gamesInvolvingCarol = await db
-      .collection('games')
+      .collection('games_v2')
       .find({ $or: [{ 'players.white': 'carol' }, { 'players.black': 'carol' }] })
       .toArray();
     expect(gamesInvolvingCarol).toHaveLength(1);

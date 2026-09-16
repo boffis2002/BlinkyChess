@@ -3,11 +3,7 @@ const router = express.Router();
 
 const users = require('../../src/models/users');
 const asyncHandler = require('../lib/asyncHandler');
-
-function publicUser(user) {
-  const { passwordHash, ...rest } = user;
-  return rest;
-}
+const publicUser = require('../lib/publicUser');
 
 const getLeaderboard = asyncHandler(async (req, res) => {
   const board = await users.listLeaderboard();
