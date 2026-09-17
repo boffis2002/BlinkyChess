@@ -58,12 +58,12 @@
 
 .ui-button-danger {
     background-color: transparent;
-    color: #b91c1c;
-    border-color: #b91c1c;
+    color: var(--danger);
+    border-color: var(--danger);
 }
 
 .ui-button-danger:hover:not(:disabled) {
-    background-color: #b91c1c;
+    background-color: var(--danger);
     color: #fff;
 }
 
@@ -98,7 +98,7 @@
     background-color: var(--card-bg);
     color: var(--text);
     border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-lg);
     width: min(420px, 100%);
     max-height: 90vh;
     overflow-y: auto;
@@ -184,7 +184,7 @@
 }
 
 .ui-toast-error {
-    background-color: #b91c1c;
+    background-color: var(--danger);
     color: #fff;
 }
 

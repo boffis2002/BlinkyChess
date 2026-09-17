@@ -15,6 +15,27 @@
     --radius: 14px;
     --radius-sm: 8px;
     --shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.2);
+
+    /* Semantic colors — same values already used ad hoc across game.css/ui.css,
+       now named so every page reads from one place instead of repeating hex codes.
+       -text variants are for text sitting directly on a card background; the
+       bare tokens are for solid fills (buttons, toast) that need more contrast
+       against white text. */
+    --success: #1d9e75;
+    --danger: #b91c1c;
+    --danger-text: #d84545;
+    --board-light: #ded5c4;
+    --board-dark: #2e2012;
+
+    /* Shared spacing scale — new components should reach for these instead of
+       inventing one-off px/clamp values; existing fine-tuned clamp() paddings
+       are left as-is until their page gets restyled. */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 16px;
+    --space-4: 24px;
+    --space-5: 40px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,6 +49,7 @@
         --text-on-accent: #0c1a16;
         --card-bg: rgb(24, 24, 38);
         --shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
     }
 }
 
@@ -57,6 +79,15 @@ body {
 
 a {
     color: inherit;
+}
+
+/* Keyboard-focus ring — most interactive elements had none before, relying on
+   whatever the browser default happened to be (often invisible on dark cards). */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--accent-mid);
+    outline-offset: 2px;
 }
 
 header {

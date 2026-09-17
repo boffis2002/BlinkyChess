@@ -41,11 +41,11 @@
 }
 
 .whitecell {
-    background-color: #DED5C4;
+    background-color: var(--board-light);
 }
 
 .browncell {
-    background-color: #2E2012;
+    background-color: var(--board-dark);
 }
 
 .whitecell img, .browncell img {
@@ -91,11 +91,11 @@ p {
 }
 
 .result-win {
-    color: #1d9e75;
+    color: var(--success);
 }
 
 .result-lose {
-    color: #d84545;
+    color: var(--danger-text);
 }
 
 .result-draw {
