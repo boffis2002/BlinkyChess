@@ -3,6 +3,16 @@ import { Link } from 'react-router-dom';
 import api from '../api';
 import Card from './ui/Card';
 
+function RankingIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <path d="M5 20V10" />
+      <path d="M12 20V4" />
+      <path d="M19 20v-7" />
+    </svg>
+  );
+}
+
 export default function Leaderboard({ currentUsername }) {
   const [board, setBoard] = useState([]);
 
@@ -12,7 +22,10 @@ export default function Leaderboard({ currentUsername }) {
 
   return (
     <Card className="game-list leaderboard">
-      <h2 className="game-list-title">Leaderboard</h2>
+      <h2 className="game-list-title">
+        <RankingIcon />
+        Leaderboard
+      </h2>
       {board.length === 0 && <p className="game-list-empty">No ranked players yet.</p>}
       {board.map((player, i) => (
         <Link

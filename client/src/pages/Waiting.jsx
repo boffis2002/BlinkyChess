@@ -67,7 +67,7 @@ export default function Waiting() {
 
   return (
     <>
-      <Header title="BlinkyChess" />
+      <Header />
       <main className="main-index">
         <div className="waiting-content">
           <div className="loader"></div>

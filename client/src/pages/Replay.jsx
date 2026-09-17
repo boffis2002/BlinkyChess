@@ -42,7 +42,7 @@ export default function Replay() {
   if (notFound) {
     return (
       <>
-        <Header title="BlinkyChess" />
+        <Header />
         <main className="main-index"><p>Game not found.</p></main>
       </>
     );
@@ -51,7 +51,7 @@ export default function Replay() {
   if (!game) {
     return (
       <>
-        <Header title="BlinkyChess" />
+        <Header />
         <main className="main-index"><div className="loader"></div></main>
       </>
     );
@@ -62,7 +62,7 @@ export default function Replay() {
 
   return (
     <>
-      <Header title="BlinkyChess" />
+      <Header />
       <main className="main-index game-main">
         <div className="game-board-column">
           <Card className="replay-players">

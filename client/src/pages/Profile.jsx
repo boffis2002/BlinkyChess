@@ -42,7 +42,7 @@ export default function Profile() {
 
   return (
     <>
-      <Header title="BlinkyChess" />
+      <Header />
       <main className="main-index profile-page">
         <Card className="profile-view">
           <h2 id="username-title">{user.username}</h2>

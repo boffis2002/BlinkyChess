@@ -151,7 +151,7 @@ export default function Game() {
   if (notFound) {
     return (
       <>
-        <Header title="BlinkyChess" />
+        <Header />
         <main className="main-index"><p>Game not found.</p></main>
       </>
     );
@@ -160,7 +160,7 @@ export default function Game() {
   if (!game || !whiteUser) {
     return (
       <>
-        <Header title="BlinkyChess" />
+        <Header />
         <main className="main-index"><div className="loader"></div></main>
       </>
     );
@@ -188,7 +188,7 @@ export default function Game() {
 
   return (
     <>
-      <Header title="BlinkyChess" />
+      <Header />
       <main className="main-index game-main">
         <Modal open={Boolean(endPopup)} onClose={() => navigate('/')} title="Game over">
           {endPopup && (

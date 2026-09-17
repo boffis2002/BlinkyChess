@@ -3,8 +3,9 @@
 
 .ui-card {
     background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 12px;
-    box-shadow: var(--shadow);
+    box-shadow: var(--shadow-sm);
     padding: clamp(14px, 2.5vw, 20px) clamp(16px, 3vw, 24px);
 }
 

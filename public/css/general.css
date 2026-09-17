@@ -27,6 +27,8 @@
     --danger-text: #d84545;
     --board-light: #ded5c4;
     --board-dark: #2e2012;
+    --card-border: rgba(0, 0, 0, 0.08);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.08);
 
     /* Shared spacing scale — new components should reach for these instead of
        inventing one-off px/clamp values; existing fine-tuned clamp() paddings
@@ -50,6 +52,8 @@
         --card-bg: rgb(24, 24, 38);
         --shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
         --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+        --card-border: rgba(255, 255, 255, 0.08);
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.25);
     }
 }
 
@@ -91,20 +95,36 @@ input:focus-visible {
 }
 
 header {
-    font-family: "PLZ", Arial, sans-serif;
-    background: var(--accent);
-    color: var(--text-on-accent);
+    background: var(--card-bg);
+    color: var(--text);
+    border-bottom: 1px solid var(--card-border);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: clamp(10px, 2.5vw, 18px) clamp(16px, 4vw, 40px);
+    padding: clamp(10px, 2vw, 16px) clamp(16px, 4vw, 40px);
 }
 
-.titolo {
-    font-size: clamp(28px, 5vw, 56px);
-    margin: 0;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.brand-mark {
+    width: 22px;
+    height: 22px;
+    color: var(--accent-mid);
+}
+
+.brand-name {
+    font-family: "PLZ", Arial, sans-serif;
+    font-size: clamp(16px, 2.2vw, 19px);
+    font-weight: 600;
+    letter-spacing: 0.2px;
 }
 
 #header-right {
@@ -192,9 +212,10 @@ footer {
     }
 }
 
-/* Home: the CTA gets its own row so it reads as the primary action, with the
-   two info cards as a clearly secondary row underneath — instead of all three
-   competing at the same visual weight side by side. */
+/* Home: a proper hero banner (same accent hues as everywhere else, just used
+   as a gradient instead of a flat fill) carries the primary action, with the
+   two info cards as a clearly secondary row underneath — instead of a lone
+   button and two cards all competing at the same visual weight. */
 .home-page {
     flex-direction: column;
     gap: var(--space-5);
@@ -202,12 +223,40 @@ footer {
 
 .home-hero {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3);
     width: 100%;
+    max-width: 640px;
+    background: linear-gradient(135deg, var(--accent-mid), var(--accent-deep));
+    color: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: clamp(32px, 6vw, 56px) clamp(20px, 5vw, 40px);
+}
+
+.home-heading {
+    margin: 0;
+    font-size: clamp(26px, 4.2vw, 38px);
+    font-weight: 700;
+}
+
+.home-subheading {
+    margin: 0;
+    max-width: 420px;
+    font-size: clamp(14px, 2vw, 16px);
+    opacity: 0.85;
 }
 
 .home-hero .hero-cta {
+    background-color: #fff;
+    color: var(--accent-deep);
     box-shadow: var(--shadow-lg);
+}
+
+.home-hero .hero-cta:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
 .home-lists {
@@ -229,10 +278,20 @@ footer {
 }
 
 .game-list-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 18px;
     margin: 0 0 12px;
     padding-bottom: var(--space-2);
     border-bottom: 2px solid var(--accent);
+}
+
+.game-list-title svg {
+    width: 18px;
+    height: 18px;
+    color: var(--accent-mid);
+    flex-shrink: 0;
 }
 
 .game-list-empty {

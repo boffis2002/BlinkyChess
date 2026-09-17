@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Inline instead of PNGs: they inherit the header's text color via
-// currentColor, so the same icon works on every page/theme without needing
-// separate light/dark image variants swapped in by prop.
-function HomeIcon() {
+// Inline SVGs instead of PNGs: they inherit currentColor, so the same asset
+// works on every page/theme without separate light/dark image variants.
+function PawnMark() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 11.5 12 4l9 7.5" />
-      <path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9" />
+    <svg className="brand-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <circle cx="12" cy="7" r="3.2" />
+      <path d="M9 11.3h6l1.5 5.7H7.5l1.5-5.7z" />
+      <rect x="6" y="18" width="12" height="2.6" rx="1.3" />
     </svg>
   );
 }
@@ -23,7 +23,7 @@ function AccountIcon() {
   );
 }
 
-export default function Header({ title }) {
+export default function Header() {
   const { username, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -41,11 +41,11 @@ export default function Header({ title }) {
 
   return (
     <header id="header-index">
-      {title && <h1 className="titolo">{title}</h1>}
+      <Link className="brand" to="/">
+        <PawnMark />
+        <span className="brand-name">BlinkyChess</span>
+      </Link>
       <div id="header-right">
-        <Link className="icon" to="/" aria-label="Home">
-          <HomeIcon />
-        </Link>
         <div className="dropdown" ref={dropdownRef}>
           <a className="icon" aria-label="Account" onClick={() => setMenuOpen((open) => !open)}>
             <AccountIcon />

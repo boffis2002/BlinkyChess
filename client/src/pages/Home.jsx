@@ -9,6 +9,15 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { useAuth } from '../context/AuthContext';
 
+function LiveIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" />
+      <circle cx="12" cy="12" r="8" opacity="0.4" />
+    </svg>
+  );
+}
+
 export default function Home() {
   const navigate = useNavigate();
   const { username } = useAuth();
@@ -27,16 +36,21 @@ export default function Home() {
 
   return (
     <>
-      <Header title="BlinkyChess" />
+      <Header />
       <main className="main-index home-page">
         <section className="home-hero">
+          <h1 className="home-heading">Play chess online</h1>
+          <p className="home-subheading">Match with a real opponent, ranked or casual, and climb the leaderboard.</p>
           <Button variant="primary" className="hero-cta" onClick={() => setPopupVisible(true)}>
             Look for a game
           </Button>
         </section>
         <div className="home-lists">
           <Card className="game-list">
-            <h2 className="game-list-title">Live games</h2>
+            <h2 className="game-list-title">
+              <LiveIcon />
+              Live games
+            </h2>
             {games.length === 0 && <p className="game-list-empty">No games in progress right now.</p>}
             {games.map((game) => (
               <div className="game-list-row" key={game._id}>
