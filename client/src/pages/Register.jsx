@@ -1,21 +1,28 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import Button from '../components/ui/Button';
 
 export default function Register() {
   const { register } = useAuth();
+  const showToast = useToast();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleRegister() {
+    setLoading(true);
     try {
       await register(username, password, confirmPassword);
       navigate('/');
     } catch (err) {
-      alert(err.message);
+      showToast(err.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -55,7 +62,9 @@ export default function Register() {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-        <button type="submit" className="login-submit" onClick={handleRegister}>Register</button>
+        <Button variant="primary" className="login-submit" loading={loading} onClick={handleRegister}>
+          Register
+        </Button>
         <div className="register-link">
           <p>Do you have an account yet? <Link to="/login">Login</Link></p>
           <div className="showPSW">

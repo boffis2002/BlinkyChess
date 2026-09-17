@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../api';
 import Header from '../components/Header';
+import Card from '../components/ui/Card';
 
 const RESULT_IMAGE = {
   w: { src: '/images/vittoria.png', alt: 'Win' },
@@ -32,7 +33,7 @@ export default function Profile() {
     <>
       <Header title="BlinkyChess" homeIcon="/images/casa.png" accountIcon="/images/accountbianco.png" />
       <main className="main-index">
-        <div id="profile-view">
+        <Card className="profile-view">
           <h2 id="username-title">{user.username}</h2>
           <p><strong>Win Rate:</strong> <span id="win-rate">{wr}%</span></p>
           <p><strong>ELO:</strong> <span id="elo">{user.elo}</span></p>
@@ -48,7 +49,7 @@ export default function Profile() {
               );
             })}
           </div>
-        </div>
+        </Card>
       </main>
       <footer>
         <p>Made By Sergio Boffi ©</p>

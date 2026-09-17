@@ -3,8 +3,16 @@
     src: url("PLZ.ttf") format('truetype');
 }
 
-.main-index {
+.game-main {
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.game-board-column {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: clamp(8px, 2vw, 14px);
 }
 
 .chessboard {
@@ -48,13 +56,12 @@
 }
 
 .player-info {
-    color: var(--text-on-accent);
-    border-radius: var(--radius-sm);
+    color: var(--text);
+    border-radius: 12px;
     box-shadow: var(--shadow);
-    background-color: var(--accent);
+    background-color: var(--card-bg);
     padding: clamp(8px, 2vw, 14px) clamp(14px, 3vw, 20px);
     width: min(88vw, 560px);
-    margin: 0 auto clamp(8px, 2vw, 14px);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -62,45 +69,14 @@
 }
 
 .player-info .username {
-    font-size: clamp(18px, 3vw, 28px);
+    font-size: clamp(16px, 3vw, 22px);
     font-weight: 700;
     width: 100%;
 }
 
 .player-info div:not(.username) {
-    font-size: clamp(13px, 2vw, 16px);
-}
-
-.popup, .popup2 {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: min(90vw, 380px);
-    border: none;
-    text-align: center;
-    color: var(--text-on-accent);
-    background-color: var(--accent);
-    z-index: 999;
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-}
-
-.home-button {
-    margin: 16px 0;
-    padding: 10px 24px;
-    background-color: white;
-    color: black;
-    border: none;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.home-button:hover {
-    background-color: rgb(196, 196, 196);
+    font-size: clamp(13px, 2vw, 15px);
+    opacity: 0.8;
 }
 
 p {
@@ -108,29 +84,60 @@ p {
     margin: 10px 0;
 }
 
-#popup-message {
-    background-color: rgb(55, 55, 55);
-    color: white;
-    padding: clamp(16px, 4vw, 24px) 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(16px, 3vw, 20px);
+.result-message {
+    font-size: clamp(17px, 3vw, 20px);
+    font-weight: 600;
+    margin: 0 0 16px;
 }
 
-#popup-message2 {
-    padding: clamp(16px, 4vw, 24px) 16px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(14px, 2.5vw, 20px);
-    text-align: center;
+.result-win {
+    color: #1d9e75;
 }
 
-#promotion {
-    font-size: clamp(14px, 2.5vw, 18px);
-    padding: 4px 8px;
-    border-radius: 6px;
+.result-lose {
+    color: #d84545;
+}
+
+.result-draw {
+    color: var(--text);
+    opacity: 0.8;
+}
+
+.move-history {
+    width: min(220px, 92vw);
+    max-height: min(70vh, 520px);
+    overflow-y: auto;
+    text-align: left;
+}
+
+.move-history-title {
+    font-size: 16px;
+    margin: 0 0 10px;
+}
+
+.move-history-empty {
+    font-size: 13px;
+    opacity: 0.7;
+    margin: 0;
+}
+
+.move-history-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+}
+
+.move-history-list li {
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr;
+    gap: 6px;
+    padding: 3px 0;
+}
+
+.move-history-number {
+    opacity: 0.6;
 }

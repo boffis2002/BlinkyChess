@@ -5,6 +5,9 @@ import api from '../api';
 import Board from '../components/Board';
 import PlayerInfo from '../components/PlayerInfo';
 import PromotionPopup from '../components/PromotionPopup';
+import MoveHistory from '../components/MoveHistory';
+import Modal from '../components/ui/Modal';
+import Button from '../components/ui/Button';
 import { useAuth } from '../context/AuthContext';
 
 const POLL_INTERVAL_MS = 1500;
@@ -17,12 +20,6 @@ const REASON_TEXT = {
   fifty_move: 'the fifty-move rule',
   timeout: 'timeout',
 };
-
-function popupColor(variant) {
-  if (variant === 'win') return 'rgba(0,255,0,0.8)';
-  if (variant === 'lose') return 'rgba(255,21,0,0.8)';
-  return 'rgba(100,100,100,0.8)';
-}
 
 export default function Game() {
   const { id, color: colorParam } = useParams();
@@ -166,13 +163,13 @@ export default function Game() {
     const { winner, reason } = game.result;
     const reasonText = REASON_TEXT[reason] || reason;
     if (winner === null) {
-      endPopup = { variant: 'draw', message: `It's a draw! a ${reasonText} happened` };
+      endPopup = { variant: 'draw', message: `It's a draw — ${reasonText}.` };
     } else if (isParticipant) {
       const iWon = winner === (username === game.players.white ? 'white' : 'black');
-      endPopup = iWon ? { variant: 'win', message: 'You won the match!' } : { variant: 'lose', message: 'You lost the match!' };
+      endPopup = iWon ? { variant: 'win', message: 'You won the match!' } : { variant: 'lose', message: 'You lost the match.' };
     } else {
       const winnerName = winner === 'white' ? game.players.white : game.players.black;
-      endPopup = { variant: winner === 'white' ? 'win' : 'lose', message: `${winnerName} won the match!` };
+      endPopup = { variant: winner === 'white' ? 'win' : 'lose', message: `${winnerName} won the match.` };
     }
   }
 
@@ -188,15 +185,17 @@ export default function Game() {
           <a className="logo" href="#"><img src="/images/logo.png" alt="" /></a>
         </div>
       </header>
-      <main className="main-index">
-        {endPopup && (
-          <div className="popup" style={{ display: 'block', position: 'fixed', backgroundColor: popupColor(endPopup.variant) }}>
-            <div id="popup-message">{endPopup.message}</div>
-            <button className="home-button" onClick={() => navigate('/')}>Home</button>
-          </div>
-        )}
+      <main className="main-index game-main">
+        <Modal open={Boolean(endPopup)} onClose={() => navigate('/')} title="Game over">
+          {endPopup && (
+            <>
+              <p className={`result-message result-${endPopup.variant}`}>{endPopup.message}</p>
+              <Button variant="primary" onClick={() => navigate('/')}>Home</Button>
+            </>
+          )}
+        </Modal>
         <PromotionPopup visible={Boolean(pendingMove)} onSelect={handlePromotionSelect} />
-        <div>
+        <div className="game-board-column">
           {opponentUser && <PlayerInfo user={opponentUser} time={opponentLiveTime ?? 0} timeClassName="timeHis" />}
           <Board
             chess={chess}
@@ -206,8 +205,9 @@ export default function Game() {
             legalDestinations={legalDestinations}
             onSquareClick={handleSquareClick}
           />
+          {myUser && <PlayerInfo user={myUser} time={myLiveTime ?? 0} timeClassName="timeMine" />}
         </div>
-        {myUser && <PlayerInfo user={myUser} time={myLiveTime ?? 0} timeClassName="timeMine" />}
+        <MoveHistory moves={game.moveHistory} />
       </main>
       <footer>
         <p>Made By Sergio Boffi ©</p>

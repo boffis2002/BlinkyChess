@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
+import Button from '../components/ui/Button';
 
 const POLL_INTERVAL_MS = 1500;
 
@@ -67,7 +68,13 @@ export default function Waiting() {
     <>
       <Header homeIcon="/images/logo.png" />
       <main className="main-index">
-        <div className="loader"></div>
+        <div className="waiting-content">
+          <div className="loader"></div>
+          <p className="waiting-message">Looking for an opponent…</p>
+          <Button variant="secondary" onClick={() => navigate('/')}>
+            Cancel
+          </Button>
+        </div>
       </main>
       <footer>
         <p>Made By Sergio Boffi ©</p>

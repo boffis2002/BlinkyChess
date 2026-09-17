@@ -1,19 +1,26 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
+import Button from '../components/ui/Button';
 
 export default function Login() {
   const { login } = useAuth();
+  const showToast = useToast();
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin() {
+    setLoading(true);
     try {
       await login(username, password);
       navigate('/');
     } catch (err) {
-      alert(err.message);
+      showToast(err.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -42,7 +49,9 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button type="submit" className="login-submit" onClick={handleLogin}>Login</button>
+        <Button variant="primary" className="login-submit" loading={loading} onClick={handleLogin}>
+          Login
+        </Button>
         <div className="register-link1">
           <p>Don't you have an account yet? <Link to="/register">Register</Link></p>
         </div>
