@@ -58,12 +58,11 @@ async function checkAndHandleTimeout(game, now = Date.now()) {
   return game;
 }
 
-async function getGameView(id) {
-  let game = await games.getGameById(id);
-  if (!game) return null;
-  game = await checkAndHandleTimeout(game);
-
-  const now = Date.now();
+// Enriches a raw game document with the derived fields the client needs
+// (whose turn it is, check status, live clock) — shared by the polling
+// endpoint and the move response so the client can trust either one as a
+// complete view instead of having to re-fetch after submitting a move.
+function toView(game, now = Date.now()) {
   const status = chessEngine.gameStatus(game.fen);
   const activeColor = colorLetterToName(status.turn);
   return {
@@ -75,6 +74,13 @@ async function getGameView(id) {
       black: activeColor === 'black' ? clock.computeRemaining(game.clock, 'black', now) : game.clock.black.remaining,
     },
   };
+}
+
+async function getGameView(id) {
+  let game = await games.getGameById(id);
+  if (!game) return null;
+  game = await checkAndHandleTimeout(game);
+  return toView(game);
 }
 
 async function submitMove(id, username, movePayload) {
@@ -92,7 +98,7 @@ async function submitMove(id, username, movePayload) {
   if (clock.isExpired(game.clock, activeColor, now)) {
     const winnerColor = activeColor === 'white' ? 'black' : 'white';
     const finished = await finishGame(game, { reason: 'timeout', winnerColor });
-    return { ok: false, status: 409, error: 'time expired', game: finished };
+    return { ok: false, status: 409, error: 'time expired', game: toView(finished) };
   }
 
   const moveResult = chessEngine.applyMove(game.fen, movePayload);
@@ -116,7 +122,7 @@ async function submitMove(id, username, movePayload) {
     updated = await finishGame(updated, { reason: moveResult.reason, winnerColor: moveResult.winner });
   }
 
-  return { ok: true, status: 200, game: updated };
+  return { ok: true, status: 200, game: toView(updated, now) };
 }
 
 module.exports = { getGameView, submitMove, finishGame, checkAndHandleTimeout };

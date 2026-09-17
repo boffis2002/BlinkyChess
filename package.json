@@ -6,9 +6,8 @@
   "author": "Sergio Boffi",
   "license": "MIT",
   "scripts": {
-    "start": "node app.js",
-    "dev": "DEBUG=router:* nodemon --delay 1 --ignore public/ --ignore client/ --ignore app.js",
     "dev:api": "nodemon api/dev-server.js",
+    "dev:client": "npm --prefix client run dev",
     "build": "npm --prefix client install && npm --prefix client run build",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -20,11 +19,7 @@
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.3",
-    "method-override": "^3.0.0",
-    "mongodb": "^6.2.0",
-    "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
-    "socket.io": "^4.7.5"
+    "mongodb": "^6.2.0"
   },
   "devDependencies": {
     "mongodb-memory-server": "^11.2.0",

@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api';
 import Board from '../components/Board';
@@ -38,19 +38,31 @@ export default function Game() {
 
   const chess = useMemo(() => new Chess(game ? game.fen : undefined), [game?.fen]);
 
+  // Player profiles (elo/wins/losses) barely change mid-game, so they're
+  // fetched once up front instead of on every poll tick.
+  const playersLoadedRef = useRef(false);
+
+  const applyGame = useCallback((g) => {
+    setGame(g);
+    setLiveWtime(g.liveClock.white);
+    setLiveBtime(g.liveClock.black);
+    if (!playersLoadedRef.current) {
+      playersLoadedRef.current = true;
+      Promise.all([api.getUser(g.players.white), api.getUser(g.players.black)]).then(([w, b]) => {
+        setWhiteUser(w);
+        setBlackUser(b);
+      });
+    }
+  }, []);
+
   const loadGame = useCallback(async () => {
     try {
       const g = await api.getGame(id);
-      const [w, b] = await Promise.all([api.getUser(g.players.white), api.getUser(g.players.black)]);
-      setGame(g);
-      setWhiteUser(w);
-      setBlackUser(b);
-      setLiveWtime(g.liveClock.white);
-      setLiveBtime(g.liveClock.black);
+      applyGame(g);
     } catch {
       setNotFound(true);
     }
-  }, [id]);
+  }, [id, applyGame]);
 
   // Poll instead of a socket connection — pause while the tab isn't visible.
   useEffect(() => {
@@ -102,11 +114,13 @@ export default function Game() {
     setSelectedSquare(null);
     setPendingMove(null);
     try {
-      await api.submitMove(id, { from, to, promotion });
-    } finally {
-      // Resync either way: on success this picks up the new position; on a
-      // rejected move (e.g. the opponent's move arrived first) it corrects
-      // whatever the client had guessed.
+      // The move response is already a full game view — apply it directly
+      // instead of firing a whole extra poll round-trip right after it.
+      const updated = await api.submitMove(id, { from, to, promotion });
+      applyGame(updated);
+    } catch {
+      // Rejected (e.g. the opponent's move arrived first) — resync from the
+      // server to correct whatever the client had guessed.
       loadGame();
     }
   }
