@@ -120,8 +120,7 @@ header {
     color: var(--text-on-accent);
 }
 
-.dropdown:hover .dropdown-content,
-.dropdown:focus-within .dropdown-content {
+.dropdown-content.open {
     display: block;
 }
 

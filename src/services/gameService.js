@@ -65,13 +65,14 @@ async function getGameView(id) {
 
   const now = Date.now();
   const status = chessEngine.gameStatus(game.fen);
+  const activeColor = colorLetterToName(status.turn);
   return {
     ...game,
     turn: status.turn,
     isCheck: status.isCheck,
     liveClock: {
-      white: clock.computeRemaining(game.clock, 'white', now),
-      black: clock.computeRemaining(game.clock, 'black', now),
+      white: activeColor === 'white' ? clock.computeRemaining(game.clock, 'white', now) : game.clock.white.remaining,
+      black: activeColor === 'black' ? clock.computeRemaining(game.clock, 'black', now) : game.clock.black.remaining,
     },
   };
 }
