@@ -128,7 +128,7 @@ h3 {
     display: flex;
     flex-wrap: nowrap;
     gap: clamp(3px, 1vw, 6px);
-    justify-content: center;
+    justify-content: flex-start;
     margin-top: 20px;
 }
 
