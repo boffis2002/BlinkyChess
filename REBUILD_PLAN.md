@@ -2,6 +2,22 @@
 
 > Documento di pianificazione. Nessun codice viene toccato finché non lo approvi punto per punto — è la base per allineare le decisioni prima di iniziare il lavoro vero.
 
+## Stato attuale
+
+| Fase | Cosa | Stato |
+|---|---|---|
+| 1 | Backend core (motore mosse, clock, ELO, modelli dati, auth) — `src/` | ✅ Fatto — 55 test |
+| 2 | API REST + matchmaking a coda atomica — `api/` | ✅ Fatto — 79 test |
+| 3 | Deploy su Vercel (backend in parallelo al sito legacy) | ✅ Fatto (con un fix in corsa, vedi nota sotto) |
+| 4 | Frontend ricollegato alle nuove `/api/...` (niente più `/home/...`) | ✅ Fatto — 81 test, verificato end-to-end nel browser |
+| 5 | Redesign visivo (card, Button/Modal/Toast, cronologia mosse) | ✅ Fatto |
+| 6 | Leaderboard + storico/replay partite | ⏳ Non iniziata |
+| 6 | Test E2E (Playwright) + hardening (rate limiting auth) | ⏳ Non iniziata |
+
+Il sito legacy (`app.js`/`routes/`/`model/`, collection Mongo `users`/`games`) **non è mai stato toccato** ed è rimasto funzionante per tutta la ricostruzione — il nuovo backend scrive su collection separate (`users_v2`/`games_v2`, vedi nota in §7) proprio per non mischiarsi con i dati legacy finché non si decide il cutover.
+
+**Nota importante rispetto a questo piano**: la struttura descritta in §2 (`api/[...path].js`) si è rivelata sbagliata una volta deployata — quella sintassi a parentesi quadre per le route dinamiche è una convenzione specifica di Next.js, non riconosciuta dalle Funzioni Vercel "semplici". Il file reale è **`api/index.js`**, raggiunto tramite un rewrite esplicito in `vercel.json` (`/api/(.*) → /api/index`). Il resto della sezione 2 (architettura, `src/` per la logica di dominio) è rimasto come pianificato.
+
 ## 0. Decisioni già prese (confermate in chat)
 
 | Tema | Decisione |
@@ -137,6 +153,9 @@ Operazione singola e atomica lato MongoDB ⇒ due giocatori simultanei non posso
 POST   /api/auth/register
 POST   /api/auth/login
 POST   /api/auth/logout
+GET    /api/auth/me                    # aggiunto in corsa: il cookie è httpOnly,
+                                        # serve per far scoprire al client chi è
+                                        # loggato dopo un refresh
 GET    /api/users/:username
 GET    /api/leaderboard                # nuovo
 
@@ -196,20 +215,22 @@ Obiettivo di copertura: alto (>90%) su tutta la logica di dominio in `src/engine
 
 ---
 
-## 6. Fasi di lavoro proposte
+## 6. Fasi di lavoro
 
-1. **Backend core**: modelli dati, motore mosse server-authoritative, clock server-side, auth con bcrypt+JWT — con test unit/integrazione scritti in parallelo (non dopo)
-2. **API + matchmaking a coda atomica**
-3. **Deploy scheletro su Vercel** (frontend placeholder + API) per validare da subito che il setup free funzioni end-to-end, prima di investire nel redesign
-4. **Frontend redesign** pagina per pagina, collegato alle nuove API
-5. **Feature nuove**: leaderboard, storico/replay
-6. **E2E + rifinitura responsive + hardening** (rate limiting base sulle route di auth, validazione input)
+1. ✅ **Backend core**: modelli dati, motore mosse server-authoritative, clock server-side, auth con bcrypt+JWT — test scritti in parallelo. 55 test.
+2. ✅ **API + matchmaking a coda atomica** sotto `/api/...`, ancora in parallelo al sito legacy. 79 test (24 nuovi).
+3. ✅ **Deploy su Vercel**. Il primo tentativo ha rivelato due problemi reali, entrambi corretti: la struttura del sito serviva `client/dist` ma non le funzioni `/api` (fix: `vercel.json` + framework detection), e la sintassi `[...path].js` per l'entrypoint non è valida fuori da Next.js (fix: `api/index.js` + rewrite esplicito).
+4. ✅ **Frontend ricollegato** alle nuove `/api/...` (prima chiamava ancora le vecchie `/home/...`, causa dell'errore "non va il register" sul sito online). Aggiunto `GET /api/auth/me` non previsto originariamente. Bug trovato e corretto: race condition di React StrictMode nel matchmaking lato client.
+5. ✅ **Frontend redesign**: componenti `Button`/`Modal`/`Card`/`Toast`, cronologia mosse, lista partite come card. Stessa palette.
+6. ⏳ **Feature nuove** (leaderboard, storico/replay) **+ E2E/hardening** — non ancora iniziate, prossimo passo.
+
+Lungo il percorso, un fix trovato solo testando a mano contro MongoDB Atlas reale (non nei test automatici): le nuove route leggevano dalla stessa collection `users` del sito legacy (schema diverso, password in chiaro) — la leaderboard esponeva le password in chiaro degli utenti esistenti. Corretto isolando i dati nuovi in collection separate `users_v2`/`games_v2`.
 
 ---
 
 ## 7. Decisioni aggiornate (round 2)
 
-- **Migrazione dati**: confermato, nessuna migrazione. Al momento del cutover si parte da un database pulito. Le collection attuali (`users`, `games`) sul cluster Atlas verranno svuotate — **non ho accesso di rete al cluster da questo ambiente** (stesso problema di risoluzione DNS già visto in sessione), quindi il drop andrà eseguito o da te (comando sotto) o da me in una sessione con accesso alla tua rete/macchina, quando saremo pronti al cutover effettivo (non prima, l'attuale sito deve restare funzionante nel frattempo):
+- **Migrazione dati**: confermato, nessuna migrazione. Il nuovo backend scrive già su collection separate (`users_v2`, `games_v2`, `matchQueue`) proprio per questo — non tocca mai `users`/`games` del sito legacy. Al momento del cutover (quando si spegne definitivamente `app.js`/`routes/`/`model/`), le vecchie collection `users`/`games` andranno svuotate:
   ```js
   // mongosh "mongodb+srv://cluster0.w78sdup.mongodb.net/BlinkyChess" --username sergioboffi2002_db_user
   db.users.deleteMany({})
