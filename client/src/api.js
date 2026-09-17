@@ -50,6 +50,14 @@ function getGame(id) {
   return fetchJSON('GET', '/api/games/' + id);
 }
 
+function getLeaderboard() {
+  return fetchJSON('GET', '/api/leaderboard');
+}
+
+function getUserHistory(username) {
+  return fetchJSON('GET', '/api/games/history/' + username);
+}
+
 function joinQueue({ timeControl, ranked }) {
   return fetchJSON('POST', '/api/queue/join', { timeControl, ranked });
 }
@@ -74,6 +82,8 @@ const api = {
   getUser,
   getGames,
   getGame,
+  getLeaderboard,
+  getUserHistory,
   joinQueue,
   queueStatus,
   leaveQueue,

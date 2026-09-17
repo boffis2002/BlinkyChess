@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
+import Replay from './pages/Replay';
 import Waiting from './pages/Waiting';
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/profile/:username" element={<RequireAuth><Profile /></RequireAuth>} />
             <Route path="/waiting" element={<RequireAuth><Waiting /></RequireAuth>} />
             <Route path="/game/:id/:color" element={<RequireAuth><Game /></RequireAuth>} />
+            <Route path="/replay/:id" element={<RequireAuth><Replay /></RequireAuth>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </BrowserRouter>

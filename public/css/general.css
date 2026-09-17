@@ -205,6 +205,71 @@ footer {
     font-size: 12px;
 }
 
+.leaderboard-row {
+    gap: 12px;
+}
+
+.leaderboard-rank {
+    width: 22px;
+    opacity: 0.6;
+    font-size: 13px;
+}
+
+.leaderboard-username {
+    flex: 1;
+    color: var(--text);
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.leaderboard-username:hover {
+    text-decoration: underline;
+}
+
+.leaderboard-elo {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.leaderboard-row-me {
+    background: var(--accent);
+    color: var(--text-on-accent);
+    border-radius: var(--radius-sm);
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.leaderboard-row-me .leaderboard-username {
+    color: var(--text-on-accent);
+}
+
+.match-history-row {
+    text-decoration: none;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.match-history-result {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.match-history-opponent {
+    flex: 1;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.match-history-date {
+    font-size: 13px;
+    opacity: 0.7;
+}
+
 .waiting-content {
     display: flex;
     flex-direction: column;

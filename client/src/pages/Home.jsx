@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import Header from '../components/Header';
+import Leaderboard from '../components/Leaderboard';
 import MatchOptionsPopup from '../components/MatchOptionsPopup';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { username } = useAuth();
   const [games, setGames] = useState([]);
   const [popupVisible, setPopupVisible] = useState(false);
 
@@ -44,6 +47,7 @@ export default function Home() {
             </div>
           ))}
         </Card>
+        <Leaderboard currentUsername={username} />
         <MatchOptionsPopup
           visible={popupVisible}
           onClose={() => setPopupVisible(false)}
