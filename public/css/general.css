@@ -74,11 +74,15 @@ body {
     color: var(--text);
 }
 
+/* Header and footer stay pinned; only the content between them scrolls —
+   so the footer is always visible instead of sitting below a full-page
+   scroll, no matter how much a given page's content adds up to. */
 #root {
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 a {
@@ -115,8 +119,8 @@ header {
 }
 
 .brand-mark {
-    width: 22px;
-    height: 22px;
+    font-size: 26px;
+    line-height: 1;
     color: var(--accent-mid);
 }
 
@@ -196,6 +200,8 @@ footer {
 
 .main-index {
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     width: 100%;
     padding: clamp(16px, 4vw, 32px);
     display: flex;

@@ -2,18 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-// Inline SVGs instead of PNGs: they inherit currentColor, so the same asset
-// works on every page/theme without separate light/dark image variants.
-function PawnMark() {
-  return (
-    <svg className="brand-mark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <circle cx="12" cy="7" r="3.2" />
-      <path d="M9 11.3h6l1.5 5.7H7.5l1.5-5.7z" />
-      <rect x="6" y="18" width="12" height="2.6" rx="1.3" />
-    </svg>
-  );
-}
-
 function AccountIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -42,7 +30,7 @@ export default function Header() {
   return (
     <header id="header-index">
       <Link className="brand" to="/">
-        <PawnMark />
+        <span className="brand-mark" aria-hidden="true">♞</span>
         <span className="brand-name">BlinkyChess</span>
       </Link>
       <div id="header-right">
