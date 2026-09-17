@@ -181,6 +181,32 @@ footer {
     }
 }
 
+/* Home: the CTA gets its own row so it reads as the primary action, with the
+   two info cards as a clearly secondary row underneath — instead of all three
+   competing at the same visual weight side by side. */
+.home-page {
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.home-hero {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.home-hero .hero-cta {
+    box-shadow: var(--shadow-lg);
+}
+
+.home-lists {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    justify-content: center;
+    width: 100%;
+}
+
 .hero-cta {
     padding: clamp(16px, 3vw, 24px) clamp(28px, 5vw, 48px);
     font-size: clamp(18px, 3vw, 24px);
@@ -194,13 +220,16 @@ footer {
 .game-list-title {
     font-size: 18px;
     margin: 0 0 12px;
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--accent);
 }
 
 .game-list-empty {
     color: var(--text);
     opacity: 0.7;
-    margin: 0;
+    margin: var(--space-3) 0;
     font-size: 14px;
+    text-align: center;
 }
 
 .game-list-row {
@@ -208,8 +237,14 @@ footer {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px 0;
+    padding: 10px 12px;
+    margin: 0 calc(var(--space-2) * -1.5);
     border-top: 1px solid var(--bg-main);
+    border-radius: var(--radius-sm);
+}
+
+a.game-list-row:hover {
+    background-color: var(--bg-main);
 }
 
 .game-list-row:first-of-type {
@@ -238,6 +273,8 @@ footer {
 
 .leaderboard-row {
     gap: 12px;
+    text-decoration: none;
+    color: var(--text);
 }
 
 .leaderboard-rank {
@@ -299,6 +336,18 @@ footer {
 .match-history-date {
     font-size: 13px;
     opacity: 0.7;
+}
+
+.match-history {
+    width: min(520px, 92vw);
+}
+
+/* Profile: an intentional asymmetric pair instead of two independently-sized
+   cards that happen to land side by side — stats stay compact, history (more
+   rows of information) gets the extra room. Top-aligned since the two cards
+   rarely match height. */
+.profile-page {
+    align-items: flex-start;
 }
 
 .waiting-content {

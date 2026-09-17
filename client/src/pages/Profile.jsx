@@ -42,7 +42,7 @@ export default function Profile() {
   return (
     <>
       <Header title="BlinkyChess" homeIcon="/images/casa.png" accountIcon="/images/accountbianco.png" />
-      <main className="main-index">
+      <main className="main-index profile-page">
         <Card className="profile-view">
           <h2 id="username-title">{user.username}</h2>
           <p><strong>Win Rate:</strong> <span id="win-rate">{wr}%</span></p>
@@ -54,7 +54,7 @@ export default function Profile() {
               const image = RESULT_IMAGE[result] ?? { src: '/images/notplayed.png', alt: 'Notp' };
               return (
                 <div className="game-result" key={i}>
-                  <img src={image.src} alt={image.alt} />
+                  <img src={image.src} alt={image.alt} title={image.alt} />
                 </div>
               );
             })}

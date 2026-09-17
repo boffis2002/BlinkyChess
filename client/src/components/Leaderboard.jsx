@@ -15,16 +15,15 @@ export default function Leaderboard({ currentUsername }) {
       <h2 className="game-list-title">Leaderboard</h2>
       {board.length === 0 && <p className="game-list-empty">No ranked players yet.</p>}
       {board.map((player, i) => (
-        <div
+        <Link
           className={`game-list-row leaderboard-row${player.username === currentUsername ? ' leaderboard-row-me' : ''}`}
+          to={`/profile/${player.username}`}
           key={player.username}
         >
           <span className="leaderboard-rank">{i + 1}</span>
-          <Link className="leaderboard-username" to={`/profile/${player.username}`}>
-            {player.username}
-          </Link>
+          <span className="leaderboard-username">{player.username}</span>
           <span className="leaderboard-elo">{player.elo}</span>
-        </div>
+        </Link>
       ))}
     </Card>
   );

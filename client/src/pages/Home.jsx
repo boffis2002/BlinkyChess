@@ -27,27 +27,31 @@ export default function Home() {
   return (
     <>
       <Header title="BlinkyChess" homeIcon="/images/casabianca.png" />
-      <main className="main-index">
-        <Button variant="primary" className="hero-cta" onClick={() => setPopupVisible(true)}>
-          Look for a game
-        </Button>
-        <Card className="game-list">
-          <h2 className="game-list-title">Live games</h2>
-          {games.length === 0 && <p className="game-list-empty">No games in progress right now.</p>}
-          {games.map((game) => (
-            <div className="game-list-row" key={game._id}>
-              <div className="game-list-players">
-                <span>{game.players.white}</span>
-                <span className="game-list-vs">vs</span>
-                <span>{game.players.black}</span>
+      <main className="main-index home-page">
+        <section className="home-hero">
+          <Button variant="primary" className="hero-cta" onClick={() => setPopupVisible(true)}>
+            Look for a game
+          </Button>
+        </section>
+        <div className="home-lists">
+          <Card className="game-list">
+            <h2 className="game-list-title">Live games</h2>
+            {games.length === 0 && <p className="game-list-empty">No games in progress right now.</p>}
+            {games.map((game) => (
+              <div className="game-list-row" key={game._id}>
+                <div className="game-list-players">
+                  <span>{game.players.white}</span>
+                  <span className="game-list-vs">vs</span>
+                  <span>{game.players.black}</span>
+                </div>
+                <Button variant="secondary" onClick={() => navigate(`/game/${game._id}/w`)}>
+                  Spectate
+                </Button>
               </div>
-              <Button variant="secondary" onClick={() => navigate(`/game/${game._id}/w`)}>
-                Spectate
-              </Button>
-            </div>
-          ))}
-        </Card>
-        <Leaderboard currentUsername={username} />
+            ))}
+          </Card>
+          <Leaderboard currentUsername={username} />
+        </div>
         <MatchOptionsPopup
           visible={popupVisible}
           onClose={() => setPopupVisible(false)}

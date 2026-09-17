@@ -104,7 +104,7 @@
 
 /* Profile page */
 .profile-view {
-    width: min(480px, 92vw);
+    width: min(360px, 92vw);
     text-align: center;
     font-size: clamp(15px, 2vw, 20px);
 }
