@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api';
 import Board from '../components/Board';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
 import PlayerInfo from '../components/PlayerInfo';
 import PromotionPopup from '../components/PromotionPopup';
 import MoveHistory from '../components/MoveHistory';
@@ -149,11 +151,7 @@ export default function Game() {
   if (notFound) {
     return (
       <>
-        <header id="header-index">
-          <div id="header-right">
-            <a className="logo" href="#"><img src="/images/logo.png" alt="" /></a>
-          </div>
-        </header>
+        <Header title="BlinkyChess" />
         <main className="main-index"><p>Game not found.</p></main>
       </>
     );
@@ -162,11 +160,7 @@ export default function Game() {
   if (!game || !whiteUser) {
     return (
       <>
-        <header id="header-index">
-          <div id="header-right">
-            <a className="logo" href="#"><img src="/images/logo.png" alt="" /></a>
-          </div>
-        </header>
+        <Header title="BlinkyChess" />
         <main className="main-index"><div className="loader"></div></main>
       </>
     );
@@ -194,11 +188,7 @@ export default function Game() {
 
   return (
     <>
-      <header id="header-index">
-        <div id="header-right">
-          <a className="logo" href="#"><img src="/images/logo.png" alt="" /></a>
-        </div>
-      </header>
+      <Header title="BlinkyChess" />
       <main className="main-index game-main">
         <Modal open={Boolean(endPopup)} onClose={() => navigate('/')} title="Game over">
           {endPopup && (
@@ -223,10 +213,7 @@ export default function Game() {
         </div>
         <MoveHistory moves={game.moveHistory} />
       </main>
-      <footer>
-        <p>Made By Sergio Boffi ©</p>
-        <p>For any need, contact me at → boffis@usi.ch</p>
-      </footer>
+      <Footer />
     </>
   );
 }

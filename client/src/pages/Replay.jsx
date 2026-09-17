@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../api';
 import Board from '../components/Board';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
 import MoveHistory from '../components/MoveHistory';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -40,11 +42,7 @@ export default function Replay() {
   if (notFound) {
     return (
       <>
-        <header id="header-index">
-          <div id="header-right">
-            <a className="logo" href="/"><img src="/images/logo.png" alt="" /></a>
-          </div>
-        </header>
+        <Header title="BlinkyChess" />
         <main className="main-index"><p>Game not found.</p></main>
       </>
     );
@@ -53,11 +51,7 @@ export default function Replay() {
   if (!game) {
     return (
       <>
-        <header id="header-index">
-          <div id="header-right">
-            <a className="logo" href="/"><img src="/images/logo.png" alt="" /></a>
-          </div>
-        </header>
+        <Header title="BlinkyChess" />
         <main className="main-index"><div className="loader"></div></main>
       </>
     );
@@ -68,11 +62,7 @@ export default function Replay() {
 
   return (
     <>
-      <header id="header-index">
-        <div id="header-right">
-          <a className="logo" href="/"><img src="/images/logo.png" alt="" /></a>
-        </div>
-      </header>
+      <Header title="BlinkyChess" />
       <main className="main-index game-main">
         <div className="game-board-column">
           <Card className="replay-players">
@@ -106,10 +96,7 @@ export default function Replay() {
         </div>
         <MoveHistory moves={game.moveHistory} onMoveSelect={(i) => setStep(i + 1)} currentMoveIndex={step - 1} />
       </main>
-      <footer>
-        <p>Made By Sergio Boffi ©</p>
-        <p>For any need, contact me at → boffis@usi.ch</p>
-      </footer>
+      <Footer />
     </>
   );
 }

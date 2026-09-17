@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import api from '../api';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
 import Card from '../components/ui/Card';
 
@@ -41,7 +42,7 @@ export default function Profile() {
 
   return (
     <>
-      <Header title="BlinkyChess" homeIcon="/images/casa.png" accountIcon="/images/accountbianco.png" />
+      <Header title="BlinkyChess" />
       <main className="main-index profile-page">
         <Card className="profile-view">
           <h2 id="username-title">{user.username}</h2>
@@ -76,10 +77,7 @@ export default function Profile() {
           })}
         </Card>
       </main>
-      <footer>
-        <p>Made By Sergio Boffi ©</p>
-        <p>For any need, contact me at → boffis@usi.ch</p>
-      </footer>
+      <Footer />
     </>
   );
 }

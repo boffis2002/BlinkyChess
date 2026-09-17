@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
 import Button from '../components/ui/Button';
 
@@ -66,7 +67,7 @@ export default function Waiting() {
 
   return (
     <>
-      <Header homeIcon="/images/logo.png" />
+      <Header title="BlinkyChess" />
       <main className="main-index">
         <div className="waiting-content">
           <div className="loader"></div>
@@ -76,10 +77,7 @@ export default function Waiting() {
           </Button>
         </div>
       </main>
-      <footer>
-        <p>Made By Sergio Boffi ©</p>
-        <p>For any need, contact me at → boffis@usi.ch</p>
-      </footer>
+      <Footer />
     </>
   );
 }

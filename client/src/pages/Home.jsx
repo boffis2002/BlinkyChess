@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import Footer from '../components/Footer';
 import Header from '../components/Header';
 import Leaderboard from '../components/Leaderboard';
 import MatchOptionsPopup from '../components/MatchOptionsPopup';
@@ -26,7 +27,7 @@ export default function Home() {
 
   return (
     <>
-      <Header title="BlinkyChess" homeIcon="/images/casabianca.png" />
+      <Header title="BlinkyChess" />
       <main className="main-index home-page">
         <section className="home-hero">
           <Button variant="primary" className="hero-cta" onClick={() => setPopupVisible(true)}>
@@ -58,10 +59,7 @@ export default function Home() {
           onPlay={handlePlay}
         />
       </main>
-      <footer>
-        <p>Made By Sergio Boffi ©</p>
-        <p>For any need, contact me at → boffis@usi.ch</p>
-      </footer>
+      <Footer />
     </>
   );
 }

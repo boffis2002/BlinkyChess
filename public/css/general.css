@@ -113,11 +113,22 @@ header {
     gap: clamp(12px, 3vw, 28px);
 }
 
-#header-right > .icon img,
-#header-right .dropdown > a img {
-    width: clamp(26px, 4vw, 38px);
-    height: clamp(26px, 4vw, 38px);
-    object-fit: contain;
+.icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 150ms ease;
+}
+
+.icon:hover {
+    opacity: 0.7;
+}
+
+#header-right > .icon svg,
+#header-right .dropdown > a svg {
+    width: clamp(22px, 3.4vw, 30px);
+    height: clamp(22px, 3.4vw, 30px);
     display: block;
 }
 
