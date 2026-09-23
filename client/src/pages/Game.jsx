@@ -185,6 +185,7 @@ export default function Game() {
   const opponentUser = color === 'white' ? blackUser : whiteUser;
   const myLiveTime = color === 'white' ? liveWtime : liveBtime;
   const opponentLiveTime = color === 'white' ? liveBtime : liveWtime;
+  const activeColor = game.status === 'active' ? (game.turn === 'w' ? 'white' : 'black') : null;
 
   return (
     <>
@@ -200,7 +201,14 @@ export default function Game() {
         </Modal>
         <PromotionPopup visible={Boolean(pendingMove)} onSelect={handlePromotionSelect} />
         <div className="game-board-column">
-          {opponentUser && <PlayerInfo user={opponentUser} time={opponentLiveTime ?? 0} timeClassName="timeHis" />}
+          {opponentUser && (
+            <PlayerInfo
+              user={opponentUser}
+              time={opponentLiveTime ?? 0}
+              timeClassName="timeHis"
+              active={activeColor === (color === 'white' ? 'black' : 'white')}
+            />
+          )}
           <Board
             chess={chess}
             color={color}
@@ -209,7 +217,9 @@ export default function Game() {
             legalDestinations={legalDestinations}
             onSquareClick={handleSquareClick}
           />
-          {myUser && <PlayerInfo user={myUser} time={myLiveTime ?? 0} timeClassName="timeMine" />}
+          {myUser && (
+            <PlayerInfo user={myUser} time={myLiveTime ?? 0} timeClassName="timeMine" active={activeColor === color} />
+          )}
         </div>
         <MoveHistory moves={game.moveHistory} />
       </main>

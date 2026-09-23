@@ -55,10 +55,32 @@
     cursor: pointer;
 }
 
+/* Legal-move indicator: a CSS dot instead of a semi-transparent raster PNG —
+   crisp at any board size/resolution instead of getting soft at large zoom. */
+.legal-dot {
+    width: 32%;
+    height: 32%;
+    border-radius: 50%;
+    background-color: var(--accent-mid);
+    opacity: 0.55;
+    cursor: pointer;
+    transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.legal-dot:hover {
+    opacity: 0.8;
+    transform: scale(1.15);
+}
+
+.pedina-selected {
+    box-shadow: inset 0 0 0 3px var(--accent-mid);
+}
+
 .player-info {
     color: var(--text);
     border-radius: 12px;
-    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-sm);
     background-color: var(--card-bg);
     padding: clamp(8px, 2vw, 14px) clamp(14px, 3vw, 20px);
     width: min(88vw, 560px);
@@ -66,6 +88,13 @@
     flex-wrap: wrap;
     align-items: center;
     gap: clamp(6px, 2vw, 16px);
+    transition: border-color 150ms ease;
+}
+
+/* Whoever's clock is actually running gets a visible ring — useful now that
+   the clock fix means only one side's time ever moves at once. */
+.player-info-active {
+    border-color: var(--accent-mid);
 }
 
 .player-info .username {
@@ -147,15 +176,18 @@ p {
 .move-history-move {
     background: none;
     border: none;
-    padding: 0;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    border-radius: var(--radius-sm);
     font: inherit;
     color: inherit;
     cursor: pointer;
     text-align: left;
+    transition: background-color 120ms ease;
 }
 
 .move-history-move:hover {
-    text-decoration: underline;
+    background-color: var(--bg-main);
 }
 
 .move-history-current {

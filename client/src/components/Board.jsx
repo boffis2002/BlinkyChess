@@ -22,11 +22,9 @@ export default function Board({ chess, color, interactive, selectedSquare, legal
       let img = null;
       if (isLegalTarget) {
         img = (
-          <img
+          <span
             id={square}
-            alt="selectable"
-            src="/images/whites/selected.png"
-            style={{ opacity: 0.5, width: '45%', height: '45%' }}
+            className="legal-dot"
             onClick={clickable ? () => onSquareClick(square, piece) : undefined}
           />
         );
@@ -34,10 +32,9 @@ export default function Board({ chess, color, interactive, selectedSquare, legal
         img = (
           <img
             id={square}
-            className="pedina"
+            className={`pedina${isSelected ? ' pedina-selected' : ''}`}
             alt="nothing"
             src={`/images/${piece.color === 'w' ? 'whites' : 'blacks'}/${piece.type}.png`}
-            style={isSelected ? { border: '2px solid #FF7F26' } : undefined}
             onClick={clickable ? () => onSquareClick(square, piece) : undefined}
           />
         );
