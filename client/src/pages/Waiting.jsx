@@ -4,6 +4,7 @@ import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import { AccountIcon } from '../components/icons';
 import Button from '../components/ui/Button';
 
 const POLL_INTERVAL_MS = 1500;
@@ -70,8 +71,30 @@ export default function Waiting() {
       <Header />
       <main className="main-index">
         <div className="waiting-content">
-          <div className="loader"></div>
-          <p className="waiting-message">Looking for an opponent…</p>
+          <div className="waiting-versus">
+            <div className="waiting-avatar">
+              <span className="waiting-avatar-circle">
+                <AccountIcon />
+              </span>
+              <span>{username}</span>
+            </div>
+            <span className="waiting-vs">vs</span>
+            <div className="waiting-avatar waiting-avatar-searching">
+              <span className="waiting-avatar-circle">
+                <span className="waiting-pulse-ring" />
+                <AccountIcon />
+              </span>
+              <span>?</span>
+            </div>
+          </div>
+          <p className="waiting-message">
+            Looking for an opponent
+            <span className="waiting-dots">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </span>
+          </p>
           <Button variant="secondary" onClick={() => navigate('/')}>
             Cancel
           </Button>

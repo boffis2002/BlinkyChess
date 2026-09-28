@@ -444,6 +444,91 @@ a.game-list-row:hover {
     opacity: 0.8;
 }
 
+.waiting-versus {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.waiting-avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 13px;
+    opacity: 0.85;
+    max-width: 100px;
+}
+
+.waiting-avatar span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.waiting-avatar-circle {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--card-bg);
+    border: 2px solid var(--card-border);
+    color: var(--accent-mid);
+}
+
+.waiting-avatar-circle svg {
+    width: 28px;
+    height: 28px;
+}
+
+.waiting-avatar-searching .waiting-avatar-circle {
+    border-color: var(--accent-mid);
+}
+
+/* A ring that expands and fades behind the "unknown opponent" avatar, reading
+   as an active search instead of the earlier generic looping progress bar. */
+.waiting-pulse-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background-color: var(--accent-mid);
+    opacity: 0.35;
+    animation: waiting-pulse 1.6s ease-out infinite;
+}
+
+@keyframes waiting-pulse {
+    0% { transform: scale(1); opacity: 0.35; }
+    100% { transform: scale(1.7); opacity: 0; }
+}
+
+.waiting-vs {
+    opacity: 0.5;
+    font-size: 13px;
+}
+
+.waiting-dots span {
+    display: inline-block;
+    animation: waiting-dot-fade 1.2s infinite;
+    opacity: 0.2;
+}
+
+.waiting-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.waiting-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes waiting-dot-fade {
+    0%, 80%, 100% { opacity: 0.2; }
+    40% { opacity: 1; }
+}
+
 .loader {
     width: 140px;
     height: 20px;

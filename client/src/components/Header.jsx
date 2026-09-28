@@ -1,15 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
-function AccountIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7" />
-    </svg>
-  );
-}
+import { AccountIcon } from './icons';
 
 export default function Header() {
   const { username, logout } = useAuth();
