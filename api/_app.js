@@ -18,6 +18,11 @@ function createApp() {
   assertRequiredEnv();
   const app = express();
 
+  // Behind Vercel's (or any) reverse proxy, req.ip otherwise resolves to the
+  // proxy's address for every request — the rate limiter needs the real
+  // client IP from X-Forwarded-For instead.
+  app.set('trust proxy', 1);
+
   app.use(express.json({ limit: '1MB' }));
   app.use(cookieParser());
 

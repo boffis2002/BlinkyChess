@@ -8,6 +8,7 @@ const { isValidUsername, isValidPassword } = require('../lib/validate');
 const asyncHandler = require('../lib/asyncHandler');
 const publicUser = require('../lib/publicUser');
 const requireAuth = require('../middleware/requireAuth');
+const { authLimiter } = require('../middleware/rateLimit');
 
 const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days, matches the JWT expiry
 
@@ -21,7 +22,7 @@ function setSessionCookie(res, username) {
   });
 }
 
-router.post('/register', asyncHandler(async (req, res) => {
+router.post('/register', authLimiter, asyncHandler(async (req, res) => {
   const { username, password } = req.body || {};
   if (!isValidUsername(username) || !isValidPassword(password)) {
     return res.status(400).json({ error: 'invalid username or password' });
@@ -37,7 +38,7 @@ router.post('/register', asyncHandler(async (req, res) => {
   res.status(201).json(publicUser(user));
 }));
 
-router.post('/login', asyncHandler(async (req, res) => {
+router.post('/login', authLimiter, asyncHandler(async (req, res) => {
   const { username, password } = req.body || {};
   if (!isValidUsername(username) || !isValidPassword(password)) {
     return res.status(401).json({ error: 'invalid username or password' });

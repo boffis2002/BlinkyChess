@@ -11,8 +11,10 @@
 | 3 | Deploy su Vercel (backend in parallelo al sito legacy) | ✅ Fatto (con un fix in corsa, vedi nota sotto) |
 | 4 | Frontend ricollegato alle nuove `/api/...` (niente più `/home/...`) | ✅ Fatto — 81 test, verificato end-to-end nel browser |
 | 5 | Redesign visivo (card, Button/Modal/Toast, cronologia mosse) | ✅ Fatto |
-| 6 | Leaderboard + storico/replay partite | ⏳ Non iniziata |
-| 6 | Test E2E (Playwright) + hardening (rate limiting auth) | ⏳ Non iniziata |
+| 5b | Restyle completo (vedi `RESTYLE_PLAN.md`) | ✅ Fatto |
+| 6 | Leaderboard + storico/replay partite | ✅ Fatto |
+| 6 | Hardening: rate limiting su `/api/auth/*` | ✅ Fatto — 2 nuovi test |
+| 6 | Test E2E (Playwright) | ⏳ Non iniziata |
 
 Il sito legacy (`app.js`/`routes/`/`model/`, collection Mongo `users`/`games`) **non è mai stato toccato** ed è rimasto funzionante per tutta la ricostruzione — il nuovo backend scrive su collection separate (`users_v2`/`games_v2`, vedi nota in §7) proprio per non mischiarsi con i dati legacy finché non si decide il cutover.
 
@@ -221,8 +223,8 @@ Obiettivo di copertura: alto (>90%) su tutta la logica di dominio in `src/engine
 2. ✅ **API + matchmaking a coda atomica** sotto `/api/...`, ancora in parallelo al sito legacy. 79 test (24 nuovi).
 3. ✅ **Deploy su Vercel**. Il primo tentativo ha rivelato due problemi reali, entrambi corretti: la struttura del sito serviva `client/dist` ma non le funzioni `/api` (fix: `vercel.json` + framework detection), e la sintassi `[...path].js` per l'entrypoint non è valida fuori da Next.js (fix: `api/index.js` + rewrite esplicito).
 4. ✅ **Frontend ricollegato** alle nuove `/api/...` (prima chiamava ancora le vecchie `/home/...`, causa dell'errore "non va il register" sul sito online). Aggiunto `GET /api/auth/me` non previsto originariamente. Bug trovato e corretto: race condition di React StrictMode nel matchmaking lato client.
-5. ✅ **Frontend redesign**: componenti `Button`/`Modal`/`Card`/`Toast`, cronologia mosse, lista partite come card. Stessa palette.
-6. ⏳ **Feature nuove** (leaderboard, storico/replay) **+ E2E/hardening** — non ancora iniziate, prossimo passo.
+5. ✅ **Frontend redesign**: componenti `Button`/`Modal`/`Card`/`Toast`, cronologia mosse, lista partite come card. Stessa palette. Poi esteso a un restyle completo di tutte le pagine (vedi `RESTYLE_PLAN.md`): navbar/footer unificati, home/profile/login/register/game/replay/waiting ridisegnate, design tokens per colori/spaziatura/focus.
+6. ✅ **Feature nuove**: leaderboard (home) + storico/replay partite (profile → replay mossa per mossa). ✅ **Hardening**: rate limiting su `/api/auth/register` e `/api/auth/login` (budget condiviso tra le due, 10 tentativi / 15 min per IP). ⏳ **Test E2E (Playwright)** — non ancora iniziati.
 
 Lungo il percorso, un fix trovato solo testando a mano contro MongoDB Atlas reale (non nei test automatici): le nuove route leggevano dalla stessa collection `users` del sito legacy (schema diverso, password in chiaro) — la leaderboard esponeva le password in chiaro degli utenti esistenti. Corretto isolando i dati nuovi in collection separate `users_v2`/`games_v2`.
 
