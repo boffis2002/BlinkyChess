@@ -270,6 +270,25 @@ footer {
     background-color: rgba(255, 255, 255, 0.9);
 }
 
+.home-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+}
+
+.home-hero .hero-cta-secondary {
+    padding: clamp(16px, 3vw, 24px) clamp(28px, 5vw, 48px);
+    font-size: clamp(18px, 3vw, 24px);
+    border-color: rgba(255, 255, 255, 0.7);
+    color: #fff;
+}
+
+.home-hero .hero-cta-secondary:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
 .home-lists {
     display: flex;
     flex-wrap: wrap;

@@ -5,6 +5,7 @@ import { ToastProvider } from './context/ToastContext';
 import Game from './pages/Game';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import OfflineGame from './pages/OfflineGame';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
 import Replay from './pages/Replay';
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
             <Route path="/profile/:username" element={<RequireAuth><Profile /></RequireAuth>} />
             <Route path="/waiting" element={<RequireAuth><Waiting /></RequireAuth>} />
+            <Route path="/offline" element={<RequireAuth><OfflineGame /></RequireAuth>} />
             <Route path="/game/:id/:color" element={<RequireAuth><Game /></RequireAuth>} />
             <Route path="/replay/:id" element={<RequireAuth><Replay /></RequireAuth>} />
             <Route path="*" element={<Navigate to="/" replace />} />

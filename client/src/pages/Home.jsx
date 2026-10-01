@@ -41,9 +41,14 @@ export default function Home() {
         <section className="home-hero">
           <h1 className="home-heading">Play chess online</h1>
           <p className="home-subheading">Match with a real opponent, ranked or casual, and climb the leaderboard.</p>
-          <Button variant="primary" className="hero-cta" onClick={() => setPopupVisible(true)}>
-            Look for a game
-          </Button>
+          <div className="home-hero-actions">
+            <Button variant="primary" className="hero-cta" onClick={() => setPopupVisible(true)}>
+              Look for a game
+            </Button>
+            <Button variant="secondary" className="hero-cta-secondary" onClick={() => navigate('/offline')}>
+              Play vs Computer
+            </Button>
+          </div>
         </section>
         <div className="home-lists">
           <Card className="game-list">
