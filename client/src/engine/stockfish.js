@@ -9,6 +9,7 @@
 
 let worker = null;
 let readyPromise = null;
+let searchQueue = Promise.resolve();
 
 function getWorker() {
   if (!worker) {
@@ -47,7 +48,23 @@ function parseUciMove(uciMove) {
 
 // skillLevel: 0 (weakest) to 20 (strongest, full engine strength).
 // movetimeMs: how long the engine is allowed to think per move.
-export async function getBestMove(fen, { skillLevel = 10, movetimeMs = 800 } = {}) {
+// depth (optional): cap on search depth. Skill Level alone only weakens
+// play probabilistically — even at 0 the lite net still sees most tactics
+// if given time — so the lowest levels also limit how far ahead it looks,
+// which is what actually makes it blunder like a beginner.
+export function getBestMove(fen, options) {
+  // One engine, one search at a time: a new request (e.g. a rematch started
+  // while the previous game's search is still running) would otherwise send
+  // ucinewgame/position/go into a search in flight, which traps the WASM
+  // module ("RuntimeError: unreachable"). Queue instead; a cancelled search
+  // just finishes within its movetime and its result is ignored by the caller.
+  const run = () => search(fen, options);
+  const result = searchQueue.then(run, run);
+  searchQueue = result.catch(() => {});
+  return result;
+}
+
+async function search(fen, { skillLevel = 10, movetimeMs = 800, depth } = {}) {
   const w = getWorker();
   await whenReady();
 
@@ -64,6 +81,6 @@ export async function getBestMove(fen, { skillLevel = 10, movetimeMs = 800 } = {
     w.postMessage('ucinewgame');
     w.postMessage(`setoption name Skill Level value ${skillLevel}`);
     w.postMessage(`position fen ${fen}`);
-    w.postMessage(`go movetime ${movetimeMs}`);
+    w.postMessage(depth ? `go depth ${depth} movetime ${movetimeMs}` : `go movetime ${movetimeMs}`);
   });
 }

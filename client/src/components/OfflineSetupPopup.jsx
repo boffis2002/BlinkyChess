@@ -4,15 +4,26 @@ import Button from './ui/Button';
 
 const COLOR_OPTIONS = ['White', 'Black'];
 
+// The bottom rungs cap search depth on top of Skill Level — that's what
+// actually makes the engine miss tactics; skill alone leaves it too sharp.
+export const DEFAULT_DIFFICULTY_LABEL = 'Medium';
+
 export const DIFFICULTY_OPTIONS = [
-  { label: 'Easy', skillLevel: 2, movetimeMs: 300 },
-  { label: 'Medium', skillLevel: 10, movetimeMs: 700 },
-  { label: 'Hard', skillLevel: 20, movetimeMs: 1500 },
+  { label: 'Beginner', skillLevel: 0, movetimeMs: 100, depth: 1 },
+  { label: 'Easy', skillLevel: 0, movetimeMs: 200, depth: 2 },
+  { label: 'Casual', skillLevel: 3, movetimeMs: 300, depth: 3 },
+  { label: 'Medium', skillLevel: 8, movetimeMs: 500 },
+  { label: 'Intermediate', skillLevel: 12, movetimeMs: 800 },
+  { label: 'Hard', skillLevel: 16, movetimeMs: 1200 },
+  { label: 'Expert', skillLevel: 19, movetimeMs: 1800 },
+  { label: 'Master', skillLevel: 20, movetimeMs: 2500 },
 ];
 
 export default function OfflineSetupPopup({ visible, onClose, onPlay }) {
   const [color, setColor] = useState(COLOR_OPTIONS[0]);
-  const [difficulty, setDifficulty] = useState(DIFFICULTY_OPTIONS[1]);
+  const [difficulty, setDifficulty] = useState(
+    DIFFICULTY_OPTIONS.find((o) => o.label === DEFAULT_DIFFICULTY_LABEL)
+  );
 
   function handlePlay() {
     onPlay({ color: color === 'White' ? 'white' : 'black', difficulty });

@@ -5,7 +5,7 @@ import Board from '../components/Board';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import MoveHistory from '../components/MoveHistory';
-import OfflineSetupPopup, { DIFFICULTY_OPTIONS } from '../components/OfflineSetupPopup';
+import OfflineSetupPopup, { DEFAULT_DIFFICULTY_LABEL, DIFFICULTY_OPTIONS } from '../components/OfflineSetupPopup';
 import PromotionPopup from '../components/PromotionPopup';
 import Modal from '../components/ui/Modal';
 import Button from '../components/ui/Button';
@@ -52,7 +52,9 @@ export default function OfflineGame() {
 
   const [status, setStatus] = useState('setup'); // 'setup' | 'playing'
   const [playerColor, setPlayerColor] = useState('white');
-  const [difficulty, setDifficulty] = useState(DIFFICULTY_OPTIONS[1]);
+  const [difficulty, setDifficulty] = useState(
+    DIFFICULTY_OPTIONS.find((o) => o.label === DEFAULT_DIFFICULTY_LABEL)
+  );
 
   const chess = useMemo(() => new Chess(fen), [fen]);
   const gameOverInfo = useMemo(() => describeGameOver(chess), [chess]);
@@ -73,7 +75,11 @@ export default function OfflineGame() {
 
     let cancelled = false;
     setThinking(true);
-    getBestMove(fen, { skillLevel: difficulty.skillLevel, movetimeMs: difficulty.movetimeMs })
+    getBestMove(fen, {
+      skillLevel: difficulty.skillLevel,
+      movetimeMs: difficulty.movetimeMs,
+      depth: difficulty.depth,
+    })
       .then((move) => {
         if (cancelled || !move) return;
         const applied = chessRef.current.move(move);
